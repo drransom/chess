@@ -1,4 +1,8 @@
+require_relative 'piece'
+
 module Stepable
+  include PieceHelpers
+
   def moves
     legal_moves = []
 
@@ -12,9 +16,5 @@ module Stepable
     end
 
     legal_moves
-  end
-
-  def add_arrays(arr1, arr2)
-    [arr1[0] + arr2[0], arr1[1] + arr2[1]]
   end
 end

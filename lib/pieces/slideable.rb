@@ -1,4 +1,8 @@
+require_relative 'piece'
+
 module Slideable
+  include PieceHelpers
+
   def orthogonal_dirs
     [[0, 1], [0, -1], [1, 0], [-1, 0]]
   end
@@ -31,9 +35,5 @@ module Slideable
       end
     end
     legal_moves
-  end
-
-  def add_arrays(arr1, arr2)
-    [arr1[0] + arr2[0], arr1[1] + arr2[1]]
   end
 end
