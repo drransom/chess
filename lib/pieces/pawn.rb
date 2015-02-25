@@ -35,15 +35,23 @@ class Pawn < Piece
     forward_moves + attack_moves
   end
 
-  def attack_moves
+  def attack_spaces
     legal_moves = []
 
     attack_diffs.each do |transformation|
       test_position = add_arrays(@position, transformation)
-      next if @board.out_of_bounds?(test_position) ||
-        (@board.empty?(test_position)) ||
-        (@board.occupied?(test_position) &&
-        @board[test_position].color == @color)
+      next if @board.out_of_bounds?(test_position)
+      legal_moves << test_position
+    end
+    legal_moves
+  end
+
+  def attack_moves
+    legal_moves = []
+
+    attack_spaces.each do |test_position|
+      next unless (@board.occupied?(test_position) &&
+        @board[test_position].color != @color)
       legal_moves << test_position
     end
     legal_moves

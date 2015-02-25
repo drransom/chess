@@ -11,7 +11,7 @@ class Piece
   include PieceHelpers
 
   attr_reader :color
-  attr_accessor :position
+  attr_accessor :position, :board
 
   def initialize(color, board, position)
     @color = color

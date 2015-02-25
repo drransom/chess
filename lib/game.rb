@@ -74,7 +74,7 @@ class Game
       ('1'..'8').include?(moves[1][1])
   end
 
-  def translate_move_notation string
+  def translate_move_notation(string)
     row = 8 - string[1].to_i
     col = string[0].ord - 97
     [row, col]
@@ -93,13 +93,12 @@ class Game
   end
 
   def display_result
-    flip_current_player
     display_board
-    color = @current_player.color
-    if @board.stalemate?(color)
+    if @board.stalemate?(@current_player.color)
       puts "Stalemate."
     else
-      puts "#{color} wins!"
+      flip_current_player
+      puts "#{@current_player.color} wins!"
     end
   end
 end
@@ -112,11 +111,12 @@ class HumanPlayer
 
   def play_turn
     puts "It is #{@color}'s turn. Please select a move: "
-    gets.chomp
+    $moves.empty? ? gets.chomp : $moves.shift
   end
 end
 
 
 if __FILE__ == $0
+  $moves = Board.make_moves_from_file('lib/stalemate.txt')
   Game.new.play_chess
 end

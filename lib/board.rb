@@ -1,4 +1,5 @@
 require_relative 'pieces'
+require_relative 'game'
 require 'byebug'
 
 class Board
@@ -21,10 +22,6 @@ class Board
     @grid[(row * 8) + col] = new_value
   end
 
-  def checkmate?(color)
-    in_check?(color) && !has_legal_move?(color)
-  end
-
   def has_legal_move?(color)
     player_pieces = find_all_pieces(color)
 
@@ -39,7 +36,11 @@ class Board
   end
 
   def stalemate?(color)
-    !(in_check?(color) || has_legal_move?(color))
+    !in_check?(color) && !has_legal_move?(color)
+  end
+
+  def checkmate?(color)
+    in_check?(color) && !has_legal_move?(color)
   end
 
   def in_check?(color)
@@ -50,7 +51,8 @@ class Board
   def threatened?(position, color)
     opponent_pieces = find_all_pieces(flip_color(color))
     opponent_pieces.each do |piece|
-      return true if piece.moves.include?(position)
+      return true if piece.is_a?(Pawn) && piece.attack_spaces.include?(position)
+      return true if !piece.is_a?(Pawn) && piece.moves.include?(position)
     end
     false
   end
@@ -88,6 +90,9 @@ class Board
 
     clone_board = Board.new(false)
     clone_board.grid = clone_grid
+    clone_board.grid.compact.each do |piece|
+      piece.board = clone_board
+    end
     clone_board
   end
 
@@ -96,6 +101,7 @@ class Board
   end
 
   def leaves_self_in_check?(from, to, color)
+    debugger if false
     clone = self.clone
     clone.move_piece(from, to)
     clone.in_check?(color)
@@ -123,7 +129,6 @@ class Board
   end
 
   def build_back_row(color)
-    #debugger
     row = (color == :black) ? 0 : 7
     pieces = [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook]
     pieces.each_with_index do |piece, index|
@@ -156,5 +161,9 @@ class Board
     end
     display_string += letters
     display_string
+  end
+
+  def self.make_moves_from_file(filename)
+    moves = File.readlines(filename).map(&:chomp)
   end
 end
