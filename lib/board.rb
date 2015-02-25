@@ -38,7 +38,7 @@ class Board
     false
   end
 
-  def stalemate(color)
+  def stalemate?(color)
     !(in_check?(color) || has_legal_move?(color))
   end
 
@@ -91,6 +91,16 @@ class Board
     clone_board
   end
 
+  def move_legal?(from, to)
+    self[from].moves.include?(to)
+  end
+
+  def leaves_self_in_check?(from, to, color)
+    clone = self.clone
+    clone.move_piece(from, to)
+    clone.in_check?(color)
+  end
+
   def move_piece(from, to)
     self[to] = self[from]
     self[from] = nil
@@ -134,14 +144,17 @@ class Board
   end
 
   def display
-    display_string = ""
+    letters = "  " + %w( a b c d e f g h).join(" ")
+    display_string = letters + "\n"
     8.times do |i|
+      display_string += "#{8 - i} "
       8.times do |j|
         square = self[[i,j]]
         display_string += (square ? square.symbol : "_") + " "
       end
-      display_string += "\n"
+      display_string += " #{8 - i}\n"
     end
-    display_string.strip
+    display_string += letters
+    display_string
   end
 end

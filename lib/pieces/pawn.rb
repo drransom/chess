@@ -4,7 +4,7 @@ require_relative 'piece'
 class Pawn < Piece
   def initialize(color, board, position)
     super(color, board, position)
-    @moved = false
+    @initial_position = position
   end
 
   def symbol
@@ -12,21 +12,21 @@ class Pawn < Piece
   end
 
   def attack_diffs
-    moves = [[1, 1], [-1, 1]]
+    moves = [[1, 1], [1, -1]]
 
     if @color == :white
-      moves.each { |move| move[1] *= -1 }
+      moves.each { |move| move[0] *= -1 }
     end
 
     moves
   end
 
   def move_diffs
-    moves = [[0,1]]
-    moves << [0, 2] unless @moved
+    moves = [[1, 0]]
+    moves << [2, 0] if @position == @initial_position
 
     if @color == :white
-      moves.each { |move| move[1] *= -1 }
+      moves.each { |move| move[0] *= -1 }
     end
     moves
   end
@@ -41,8 +41,9 @@ class Pawn < Piece
     attack_diffs.each do |transformation|
       test_position = add_arrays(@position, transformation)
       next if @board.out_of_bounds?(test_position) ||
-                  (@board.occupied?(test_position) &&
-                @board[test_position].color == @color)
+        (@board.empty?(test_position)) ||
+        (@board.occupied?(test_position) &&
+        @board[test_position].color == @color)
       legal_moves << test_position
     end
     legal_moves
