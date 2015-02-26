@@ -4,10 +4,11 @@ require 'colorize'
 require 'byebug'
 
 class Board
-  attr_accessor :grid
+  attr_accessor :grid, :en_passant
 
   def initialize(fill_board = true)
     @grid = Array.new(64)
+    @en_passant = { white: nil, black: nil, target: nil }
     build_grid if fill_board
   end
 
@@ -111,8 +112,16 @@ class Board
   #return: whether a pawn needs to be promoted
   def move_piece(from, to)
     self[to] = self[from]
+    current_piece = self[to]
     self[from] = nil
-    self[to].position = to
+    current_piece.position = to
+    if current_piece.is_a?(Pawn) && ((to[0] - from[0]).abs == 2)
+      en_passant_pos = [(to[0] + from[0]) / 2, to[1]]
+      @en_passant[current_piece.color] = en_passant_pos
+      @en_passant[:target] = self[to]
+    elsif self[to].is_a?(Pawn) && @en_passant[Game.other_color(current_piece.color)] == to
+      self[@en_passant[:target].position] = nil
+    end
     self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
   end
 
@@ -167,6 +176,10 @@ class Board
     display_string
   end
 
+  def reset_en_passant(color)
+    @en_passant[color] = nil
+  end
+
   def promote_pawn(sym, position)
     color = self[position].color
     self[position] = case sym
@@ -180,8 +193,6 @@ class Board
       Rook.new(color, self, position)
     end
   end
-
-
 
   def self.make_moves_from_file(filename)
     moves = File.readlines(filename).map(&:chomp)

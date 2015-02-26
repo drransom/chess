@@ -1,4 +1,5 @@
 require_relative 'board'
+require_relative 'keypress'
 
 class InputError < ArgumentError
   def message
@@ -46,6 +47,7 @@ class Game
 
   def play_game
     until game_over?
+      @board.reset_en_passant(@current_player.color)
       display_board
       begin
         move = @current_player.play_turn #needs error checking
@@ -57,7 +59,6 @@ class Game
       end
       flip_current_player
     end
-
   end
 
   #returns whether a pawn needs to be promoted
@@ -123,6 +124,9 @@ class Game
     end
   end
 
+  def self.other_color(color)
+    color == :white ? :black : :white
+  end
 end
 
 class HumanPlayer
@@ -136,6 +140,9 @@ class HumanPlayer
     #next line uncommented for testing purposes
     #$moves.empty? ? gets.chomp : $moves.shift
     gets.chomp
+  end
+
+  def accept_input(start_position)
   end
 
   def request_pawn
