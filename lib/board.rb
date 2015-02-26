@@ -1,5 +1,6 @@
 require_relative 'pieces'
 require_relative 'game'
+require 'colorize'
 require 'byebug'
 
 class Board
@@ -155,7 +156,8 @@ class Board
       display_string += "#{8 - i} "
       8.times do |j|
         square = self[[i,j]]
-        display_string += (square ? square.symbol : "_") + " "
+        background = (i + j).even? ? :yellow : :blue
+        display_string += ((square ? square.symbol.colorize(square.color) : " ") + " ").colorize(background: background)
       end
       display_string += " #{8 - i}\n"
     end

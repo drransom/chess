@@ -10,6 +10,6 @@ class King < Piece
   end
 
   def symbol
-    @color == :white ? "♔" : "♚"
+    "♚"
   end
 end

@@ -14,7 +14,7 @@ class Queen < Piece
   end
 
   def symbol
-    @color == :white ? "♕" : "♛"
+    "♛"
   end
 
 end

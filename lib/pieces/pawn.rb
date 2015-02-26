@@ -8,7 +8,7 @@ class Pawn < Piece
   end
 
   def symbol
-    @color == :white ? "♙" : "♟"
+    "♟"
   end
 
   def attack_diffs

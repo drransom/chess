@@ -117,6 +117,7 @@ end
 
 
 if __FILE__ == $0
-  $moves = Board.make_moves_from_file('lib/stalemate.txt')
+  $moves = []
+  #$moves = Board.make_moves_from_file('lib/stalemate.txt')
   Game.new.play_chess
 end

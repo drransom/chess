@@ -10,6 +10,6 @@ class Knight < Piece
   end
 
   def symbol
-    @color == :white ? "♘" : "♞"
+    "♞"
   end
 end

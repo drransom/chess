@@ -14,6 +14,6 @@ class Bishop < Piece
   end
 
   def symbol
-    @color == :white ? "♗" : "♝"
+    "♝"
   end
 end
