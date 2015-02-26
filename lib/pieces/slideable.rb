@@ -26,7 +26,7 @@ module Slideable
       test_position = add_arrays(@position, transformation)
       until blocked || @board.out_of_bounds?(test_position)
         if @board.occupied?(test_position)
-          legal_moves << test_position unless self.color == @board[test_position].color
+          legal_moves << test_position unless self.color == @board.color(test_position)
           blocked = true
         else
           legal_moves << test_position

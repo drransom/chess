@@ -51,7 +51,7 @@ class Pawn < Piece
 
     attack_spaces.each do |test_position|
       next unless (@board.occupied?(test_position) &&
-        @board[test_position].color != @color) ||
+        @board.color(test_position) != @color) ||
         @board.en_passant[@color == :white ? :black : :white] == test_position
       legal_moves << test_position
     end
