@@ -108,10 +108,12 @@ class Board
     clone.in_check?(color)
   end
 
+  #return: whether a pawn needs to be promoted
   def move_piece(from, to)
     self[to] = self[from]
     self[from] = nil
     self[to].position = to
+    self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
   end
 
   def build_grid
@@ -164,6 +166,22 @@ class Board
     display_string += letters
     display_string
   end
+
+  def promote_pawn(sym, position)
+    color = self[position].color
+    self[position] = case sym
+    when :b
+      Bishop.new(color, self, position)
+    when :k
+      Knight.new(color, self, position)
+    when :q
+      Queen.new(color, self, position)
+    when :r
+      Rook.new(color, self, position)
+    end
+  end
+
+
 
   def self.make_moves_from_file(filename)
     moves = File.readlines(filename).map(&:chomp)

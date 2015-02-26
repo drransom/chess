@@ -18,6 +18,12 @@ class CheckError <StandardError
   end
 end
 
+class PromotePawnError < StandardError
+  def message
+    "You can only promote to a bishop, knight, queen, or rook."
+  end
+end
+
 class IllegalMoveError < StandardError
   def message
     "That move is not legal."
@@ -43,7 +49,7 @@ class Game
       display_board
       begin
         move = @current_player.play_turn #needs error checking
-        try_move_piece(move)
+        promote_pawn(move) if try_move_piece(move)
       rescue => e
         puts e.message
         #puts e.backtrace
@@ -54,6 +60,7 @@ class Game
 
   end
 
+  #returns whether a pawn needs to be promoted
   def try_move_piece(move)
     moves = move.split.map { |e| e.downcase }
     raise InputError.new unless valid_format?(moves)
@@ -80,6 +87,20 @@ class Game
     [row, col]
   end
 
+  def promote_pawn(move)
+    begin
+      piece = @current_player.request_pawn[0].downcase.to_sym
+      raise PromotePawnError.new unless [:b, :k, :q, :r].include?(piece)
+    rescue => e
+      puts e.message
+      retry
+    end
+    new_position = (move.split.map { |e| e.downcase }).last
+    @board.promote_pawn(piece, translate_move_notation(new_position))
+  end
+
+
+
   def flip_current_player
     @current_player = @current_player == @white_player ? @black_player : @white_player
   end
@@ -101,6 +122,7 @@ class Game
       puts "#{@current_player.color} wins!"
     end
   end
+
 end
 
 class HumanPlayer
@@ -111,13 +133,21 @@ class HumanPlayer
 
   def play_turn
     puts "It is #{@color}'s turn. Please select a move: "
-    $moves.empty? ? gets.chomp : $moves.shift
+    #next line uncommented for testing purposes
+    #$moves.empty? ? gets.chomp : $moves.shift
+    gets.chomp
+  end
+
+  def request_pawn
+    puts "Congratulations! You get to promote a pawn!"
+    puts "Choose bishop, knight, queen, or rook."
+    gets.chomp
   end
 end
 
 
 if __FILE__ == $0
   $moves = []
-  #$moves = Board.make_moves_from_file('lib/stalemate.txt')
+  $moves = Board.make_moves_from_file('lib/pawnpromotion.txt')
   Game.new.play_chess
 end
