@@ -20,4 +20,7 @@ class Piece
   def moves
     raise "moves not implemented"
   end
+
+  def update_has_moved
+  end
 end

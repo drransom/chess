@@ -1,8 +1,15 @@
+module BoardHelpers
+  def add_arrays(arr1, arr2)
+    [arr1[0] + arr2[0], arr1[1] + arr2[1]]
+  end
+end
+
 require_relative 'pieces'
 require_relative 'game'
 require 'colorize'
 
 class Board
+  include BoardHelpers
   attr_accessor :grid, :en_passant
 
   def initialize(fill_board = true)
@@ -82,6 +89,7 @@ class Board
     self[from] = nil
     current_piece.position = to
     process_en_passant(current_piece, from, to)
+    current_piece.update_has_moved
     self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
   end
 
@@ -123,12 +131,40 @@ class Board
     self[position] = create_piece(color(position), self, position, sym)
   end
 
+  def valid_rook?(position, color)
+    piece = self[position]
+    if (piece.is_a?(Rook) && !piece.has_moved? && piece.color == color)
+      piece
+    else
+      nil
+    end
+  end
+
+  def all_valid?(piece, test_positions)
+    test_positions.each do |test_position|
+      test_position = add_arrays(piece.position, test_position)
+      if self.occupied?(test_position) || self.threatened?(test_position, piece.color)
+        return false
+      end
+    end
+    true
+  end
+
+
   private
 
   def build_grid
     build_pawns
     build_back_row(:black)
     build_back_row(:white)
+  end
+
+  def threatened?(position, color)
+    opponent_pieces = find_all_pieces(Game.other_color(color))
+    opponent_pieces.each do |piece|
+      return true if piece.attack_spaces.include?(position)
+    end
+    false
   end
 
   def build_pawns
@@ -177,13 +213,6 @@ class Board
     end.new(color, self, position)
   end
 
-  def threatened?(position, color)
-    opponent_pieces = find_all_pieces(Game.other_color(color))
-    opponent_pieces.each do |piece|
-      return true if piece.attack_spaces.include?(position)
-    end
-    false
-  end
 
   def find_all_pieces(color)
     @grid.select { |piece| piece && piece.color == color }

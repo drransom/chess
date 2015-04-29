@@ -5,6 +5,11 @@ require_relative 'slideable'
 class Rook < Piece
   include Slideable
 
+  def initialize(color, board, position)
+    @has_moved = false
+    super(color, board, position)
+  end
+
   def moves_diagonally?
     false
   end
@@ -15,6 +20,14 @@ class Rook < Piece
 
   def symbol
     "♜"
+  end
+
+  def update_has_moved
+    @has_moved = true
+  end
+
+  def has_moved?
+    @has_moved
   end
 
 end
