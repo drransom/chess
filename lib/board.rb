@@ -76,20 +76,28 @@ class Board
     clone.in_check?(color)
   end
 
-  # return: whether a pawn needs to be promoted
+  # return: whether a pawn needs to be promoted, boolean
   def move_piece(from, to)
     self[to] = self[from]
     current_piece = self[to]
     self[from] = nil
     current_piece.position = to
-    if current_piece.is_a?(Pawn) && ((to[0] - from[0]).abs == 2)
-      en_passant_pos = [(to[0] + from[0]) / 2, to[1]]
-      @en_passant[current_piece.color] = en_passant_pos
-      @en_passant[:target] = self[to]
-    elsif self[to].is_a?(Pawn) && @en_passant[Game.other_color(current_piece.color)] == to
+    process_en_passant(current_piece, from, to)
+    self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
+  end
+
+  def process_en_passant (piece, from, to)
+    if piece.is_a?(Pawn) && ((to[0] - from[0]).abs == 2)
+      allow_en_passant(piece, from, to)
+    elsif self[to].is_a?(Pawn) && @en_passant[Game.other_color(piece.color)] == to
       self[@en_passant[:target].position] = nil
     end
-    self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
+  end
+
+  def allow_en_passant (piece, from, to)
+    en_passant_pos = [(to[0] + from[0]) / 2, to[1]]
+    @en_passant[piece.color] = en_passant_pos
+    @en_passant[:target] = self[to]
   end
 
   def display
