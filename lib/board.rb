@@ -7,6 +7,7 @@ end
 require_relative 'pieces'
 require_relative 'game'
 require 'colorize'
+require 'byebug'
 
 class Board
   include BoardHelpers
@@ -83,14 +84,18 @@ class Board
   end
 
   # return: whether a pawn needs to be promoted, boolean
-  def move_piece(from, to)
-    self[to] = self[from]
-    current_piece = self[to]
-    self[from] = nil
-    current_piece.position = to
-    process_en_passant(current_piece, from, to)
-    current_piece.update_has_moved
-    self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
+  def move_piece(from, to, ignore_castle = false)
+    if !ignore_castle && castle?(self[from], to)
+      process_castle(from, to)
+    else
+      self[to] = self[from]
+      current_piece = self[to]
+      self[from] = nil
+      current_piece.position = to
+      process_en_passant(current_piece, from, to)
+      current_piece.update_has_moved
+      self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
+    end
   end
 
   def process_en_passant (piece, from, to)
@@ -143,12 +148,22 @@ class Board
   def all_valid?(piece, test_positions)
     test_positions.each do |test_position|
       test_position = add_arrays(piece.position, test_position)
-      if self.occupied?(test_position) || self.threatened?(test_position, piece.color)
+      if occupied?(test_position) || threatened?(test_position, piece.color)
         return false
       end
     end
     true
   end
+
+  def process_castle(from, to)
+    if to[1] > from[1]
+      move_piece(to, add_arrays(from, [0, 1]))
+    else
+      move_piece(to, add_arrays(from [0, -1]))
+    end
+    move_piece(from, to, true)
+  end
+
 
 
   private
@@ -213,8 +228,15 @@ class Board
     end.new(color, self, position)
   end
 
-
   def find_all_pieces(color)
     @grid.select { |piece| piece && piece.color == color }
+  end
+
+  def castle?(piece, to)
+    if piece.is_a?(King) && piece.color == :white
+      debugger
+    end
+    piece.is_a?(King) &&
+      ((piece.position[0] != to[0]) || ((to[1] - piece.position[1]).abs > 1))
   end
 end
