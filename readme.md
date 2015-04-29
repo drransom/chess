@@ -2,8 +2,8 @@ Command Line Chess
 ==================
 A command line chess game written in pure Ruby. Currently supports only two human
 players. To play, download the repo and:
-    > bundle install
-    > ruby lib/game.rb
+    bundle install
+    ruby lib/game.rb
 
 About the Code
 ===============
