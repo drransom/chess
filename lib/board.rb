@@ -180,8 +180,7 @@ class Board
   def threatened?(position, color)
     opponent_pieces = find_all_pieces(Game.other_color(color))
     opponent_pieces.each do |piece|
-      return true if piece.is_a?(Pawn) && piece.attack_spaces.include?(position)
-      return true if !piece.is_a?(Pawn) && piece.moves.include?(position)
+      return true if piece.attack_spaces.include?(position)
     end
     false
   end
