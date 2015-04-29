@@ -56,11 +56,6 @@ class Game
 
     def valid_format?(move)
       move.match(/\A[a-hA-H][1-8][, ]+[a-hA-H][1-8]\Z/)
-      # moves.length == 2 &&
-      #   ('a'..'h').include?(moves[0][0]) &&
-      #   ('a'..'h').include?(moves[1][0]) &&
-      #   ('1'..'8').include?(moves[0][1]) &&
-      #   ('1'..'8').include?(moves[1][1])
     end
 
     def translate_move_notation(string)

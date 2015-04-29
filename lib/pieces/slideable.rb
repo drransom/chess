@@ -36,4 +36,8 @@ module Slideable
     end
     legal_moves
   end
+
+  def attack_spaces
+    moves
+  end
 end

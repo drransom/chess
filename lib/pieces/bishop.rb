@@ -16,4 +16,8 @@ class Bishop < Piece
   def symbol
     "♝"
   end
+
+  def attack_spaces
+    moves
+  end
 end

@@ -17,4 +17,8 @@ module Stepable
 
     legal_moves
   end
+
+  def attack_spaces
+    moves
+  end
 end
