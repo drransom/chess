@@ -1,7 +1,6 @@
 require_relative 'pieces'
 require_relative 'game'
 require 'colorize'
-require 'byebug'
 
 class Board
   attr_accessor :grid, :en_passant
@@ -126,68 +125,68 @@ class Board
 
   private
 
-    def build_grid
-      build_pawns
-      build_back_row(:black)
-      build_back_row(:white)
-    end
+  def build_grid
+    build_pawns
+    build_back_row(:black)
+    build_back_row(:white)
+  end
 
-    def build_pawns
-      8.times do |col|
-        position = [1, col]
-        self[position] = Pawn.new(:black, self, position)
-        position = [6, col]
-        self[position] = Pawn.new(:white, self, position)
+  def build_pawns
+    8.times do |col|
+      position = [1, col]
+      self[position] = Pawn.new(:black, self, position)
+      position = [6, col]
+      self[position] = Pawn.new(:white, self, position)
+    end
+  end
+
+  def build_back_row(color)
+    row = (color == :black) ? 0 : 7
+    pieces = [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook]
+    pieces.each_with_index do |piece, index|
+      position = [row, index]
+      self[position] = create_piece(color, self, position, piece)
+    end
+  end
+
+  def has_legal_move?(color)
+    player_pieces = find_all_pieces(color)
+
+    player_pieces.each do |piece|
+      piece.moves.each do |move|
+        clone = self.clone
+        clone.move_piece(piece.position, move)
+        return true unless clone.in_check?(color)
       end
     end
+    false
+  end
 
-    def build_back_row(color)
-      row = (color == :black) ? 0 : 7
-      pieces = [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook]
-      pieces.each_with_index do |piece, index|
-        position = [row, index]
-        self[position] = create_piece(color, self, position, piece)
-      end
+  def create_piece(color, board, position, sym)
+    case sym
+    when :rook
+      Rook
+    when :knight
+      Knight
+    when :bishop
+      Bishop
+    when :queen
+      Queen
+    when :king
+      King
+    end.new(color, self, position)
+  end
+
+  def threatened?(position, color)
+    opponent_pieces = find_all_pieces(Game.other_color(color))
+    opponent_pieces.each do |piece|
+      return true if piece.is_a?(Pawn) && piece.attack_spaces.include?(position)
+      return true if !piece.is_a?(Pawn) && piece.moves.include?(position)
     end
+    false
+  end
 
-    def has_legal_move?(color)
-      player_pieces = find_all_pieces(color)
-
-      player_pieces.each do |piece|
-        piece.moves.each do |move|
-          clone = self.clone
-          clone.move_piece(piece.position, move)
-          return true unless clone.in_check?(color)
-        end
-      end
-      false
-    end
-
-    def create_piece(color, board, position, sym)
-      case sym
-      when :rook
-        Rook
-      when :knight
-        Knight
-      when :bishop
-        Bishop
-      when :queen
-        Queen
-      when :king
-        King
-      end.new(color, self, position)
-    end
-
-    def threatened?(position, color)
-      opponent_pieces = find_all_pieces(Game.other_color(color))
-      opponent_pieces.each do |piece|
-        return true if piece.is_a?(Pawn) && piece.attack_spaces.include?(position)
-        return true if !piece.is_a?(Pawn) && piece.moves.include?(position)
-      end
-      false
-    end
-
-    def find_all_pieces(color)
-      @grid.select { |piece| piece && piece.color == color }
-    end
+  def find_all_pieces(color)
+    @grid.select { |piece| piece && piece.color == color }
+  end
 end
