@@ -1,7 +1,8 @@
 Command Line Chess
 ==================
-A command line chess game written in pure Ruby. Currently supports only two human
-players. To play, download the repo and:
+A command line chess game written in pure Ruby. The game supports two human players.
+The full rule set including castling and en passant, but not the 3-repeat and 60-move rules.
+To play, download the repo and:
 
 ````
     > bundle install
@@ -32,4 +33,4 @@ end
 ```
 Pieces
 ---------------
-All six chess pieces inherit from a single `Piece` class, which no logic other than initialization. Most movement logic is delegated to `Slideable` and `Stepable` modules. `King` and `Knight` include `Stepable`, while `Queen`, `Bishop`, and `Rook` include `Slideable`. The `Pawn` class has its own movement logic due to the complexity of first moves, attacks, promotion, and en passant.
+All six chess pieces inherit from a single `Piece` class, which holds no logic other than initialization. Most movement logic is delegated to `Slideable` and `Stepable` modules. `King` and `Knight` include `Stepable`, while `Queen`, `Bishop`, and `Rook` include `Slideable`. The `Pawn` class has its own movement logic due to the complexity of first moves, attacks, promotion, and en passant.
