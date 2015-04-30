@@ -13,17 +13,21 @@ class Board
     build_grid if fill_board
   end
 
-  def [](position)
+  def set_position(position)
     row, col = position
     raise 'invalid position' if out_of_bounds?(position)
+  end
+  
+  def [](position)
+    row, col = set_position(position)
     @grid[(row * 8) + col]
   end
 
   def []=(position, new_value)
-    row, col = position
-    raise 'invalid position' if out_of_bounds?(position)
+    row, col = set_position
     @grid[(row * 8) + col] = new_value
   end
+
 
   def stalemate?(color)
     !in_check?(color) && !has_legal_move?(color)
