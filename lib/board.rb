@@ -1,16 +1,10 @@
-module BoardHelpers
-  def add_arrays(arr1, arr2)
-    [arr1[0] + arr2[0], arr1[1] + arr2[1]]
-  end
-end
-
 require_relative 'pieces'
 require_relative 'game'
 require 'colorize'
 require 'byebug'
 
 class Board
-  include BoardHelpers
+  include ChessHelper
   attr_accessor :grid, :en_passant
 
   def initialize(fill_board = true)
@@ -119,7 +113,7 @@ class Board
       display_string += "#{8 - i} "
       8.times do |j|
         square = self[[i,j]]
-        background = (i + j).even? ? :yellow : :blue
+        background = (i + j).even? ? :red : :green
         display_string += ((square ? square.symbol.colorize(square.color) : " ") + " ").colorize(background: background)
       end
       display_string += " #{8 - i}\n"
@@ -159,7 +153,7 @@ class Board
     if to[1] > from[1]
       move_piece(to, add_arrays(from, [0, 1]))
     else
-      move_piece(to, add_arrays(from [0, -1]))
+      move_piece(to, add_arrays(from, [0, -1]))
     end
     move_piece(from, to, true)
   end
@@ -233,9 +227,6 @@ class Board
   end
 
   def castle?(piece, to)
-    if piece.is_a?(King) && piece.color == :white
-      debugger
-    end
     piece.is_a?(King) &&
       ((piece.position[0] != to[0]) || ((to[1] - piece.position[1]).abs > 1))
   end

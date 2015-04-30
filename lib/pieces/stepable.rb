@@ -1,7 +1,7 @@
 require_relative 'piece'
 
 module Stepable
-  include PieceHelpers
+  include ChessHelper
 
   def moves
     legal_moves = []

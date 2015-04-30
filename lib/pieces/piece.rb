@@ -1,11 +1,7 @@
-module PieceHelpers
-  def add_arrays(arr1, arr2)
-    [arr1[0] + arr2[0], arr1[1] + arr2[1]]
-  end
-end
+require_relative '../chess_helpers.rb'
 
 class Piece
-  include PieceHelpers
+  include ChessHelper
 
   attr_reader :color
   attr_accessor :position, :board

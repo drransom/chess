@@ -1,7 +1,7 @@
 require_relative 'piece'
 
 module Slideable
-  include PieceHelpers
+  include ChessHelper
 
   def orthogonal_dirs
     [[0, 1], [0, -1], [1, 0], [-1, 0]]

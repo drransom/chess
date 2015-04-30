@@ -21,7 +21,6 @@ class King < Piece
   end
 
   def moves
-    puts "calling moves method for #{self.color}"
     stepable_moves + castle_moves
   end
 
