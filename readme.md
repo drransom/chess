@@ -1,7 +1,7 @@
 Command Line Chess
 ==================
 A command line chess game written in pure Ruby. The game supports two human players.
-The full rule set including castling and en passant, but not the 3-repeat and 60-move rules.
+The game implements the full rule set including castling and en passant, but not the 3-repeat and 60-move rules.
 To play, download the repo and:
 
 ````
