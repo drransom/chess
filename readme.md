@@ -27,7 +27,7 @@ def [](position)
 end
 
 def []=(position, new_value)
-  row, col = set_position
+  row, col = set_position(position)
   @grid[(row * 8) + col] = new_value
 end
 ```

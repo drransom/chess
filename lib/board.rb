@@ -16,15 +16,16 @@ class Board
   def set_position(position)
     row, col = position
     raise 'invalid position' if out_of_bounds?(position)
+    position
   end
-  
+
   def [](position)
     row, col = set_position(position)
     @grid[(row * 8) + col]
   end
 
   def []=(position, new_value)
-    row, col = set_position
+    row, col = set_position(position)
     @grid[(row * 8) + col] = new_value
   end
 
@@ -231,7 +232,6 @@ class Board
   end
 
   def castle?(piece, to)
-    piece.is_a?(King) &&
-      ((piece.position[0] != to[0]) || ((to[1] - piece.position[1]).abs > 1))
+    piece.is_a?(King) && (to[1] - piece.position[1].abs > 1)
   end
 end
