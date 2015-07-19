@@ -116,7 +116,7 @@ class Board
       display_string += "#{8 - i} "
       8.times do |j|
         square = self[[i,j]]
-        background = (i + j).even? ? :red : :green
+        background = (i + j).even? ? :light_white : :light_black
         display_string += ((square ? square.symbol.colorize(square.color) : " ") + " ").colorize(background: background)
       end
       display_string += " #{8 - i}\n"
