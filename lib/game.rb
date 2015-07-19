@@ -35,7 +35,7 @@ class Game
           move = @moves.empty? ? @current_player.play_turn : @moves.shift
           if move[0].downcase == 'q'
             move = @current_player.confirm_quit
-            if move[0].downcase == 'y'
+            if move[0] && move[0].downcase == 'y'
               return :quit
             end
           end
@@ -130,8 +130,8 @@ class HumanPlayer
   end
 
   def confirm_quit
-    puts "Are you sure you want to quit? Enter y to confirm, or anything else "+
-      "to continue playing: "
+    puts "Are you sure you want to quit? Enter y to confirm, or enter "+
+      "a valid move to continue playing:"
     gets.downcase.chomp
   end
 
