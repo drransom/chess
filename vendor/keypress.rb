@@ -17,7 +17,7 @@ ensure
   return input
 end
 
-# oringal case statement from:
+# original case statement from:
 # http://www.alecjacobson.com/weblog/?p=75
 def show_single_key
   c = read_char

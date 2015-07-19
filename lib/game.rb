@@ -1,5 +1,5 @@
 require_relative 'board'
-require_relative 'keypress'
+require_relative '../vendor/keypress'
 require_relative 'errors'
 
 class Game
