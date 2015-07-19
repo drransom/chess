@@ -1,7 +1,6 @@
 require_relative 'pieces'
 require_relative 'game'
 require 'colorize'
-require 'byebug'
 
 class Board
   include ChessHelper
@@ -13,19 +12,18 @@ class Board
     build_grid if fill_board
   end
 
-  def set_position(position)
-    row, col = position
+  def validate_position(position)
     raise 'invalid position' if out_of_bounds?(position)
     position
   end
 
   def [](position)
-    row, col = set_position(position)
+    row, col = validate_position(position)
     @grid[(row * 8) + col]
   end
 
   def []=(position, new_value)
-    row, col = set_position(position)
+    row, col = validate_position(position)
     @grid[(row * 8) + col] = new_value
   end
 
@@ -112,7 +110,7 @@ class Board
   end
 
   def display
-    letters = "  " + %w( a b c d e f g h).join(" ")
+    letters = "  " + ('a'..'h').to_a.join(" ")
     display_string = letters + "\n"
     8.times do |i|
       display_string += "#{8 - i} "
