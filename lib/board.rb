@@ -80,7 +80,7 @@ class Board
     clone.in_check?(color)
   end
 
-  # return: whether a pawn needs to be promoted, boolean
+  # return: outcome of move, symbol
   def move_piece(from, to, ignore_castle = false)
     if !ignore_castle && castle?(self[from], to)
       process_castle(from, to)
@@ -91,7 +91,11 @@ class Board
       current_piece.position = to
       process_en_passant(current_piece, from, to)
       current_piece.update_has_moved
-      self[to].is_a?(Pawn) && (to[0] % 7 == 0) ? true : false
+      if self[to].is_a?(Pawn) && (to[0] % 7 == 0)
+        :pawn_promotion
+      else
+        false
+      end
     end
   end
 

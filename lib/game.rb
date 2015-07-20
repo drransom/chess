@@ -12,6 +12,7 @@ class Game
 
   def play_chess(moves = [])
     @moves = moves
+    @move_counter = 0
     initialize_game
     result = play_game
     display_result(result)
@@ -39,7 +40,7 @@ class Game
             return :quit
           end
         end
-        promote_pawn(move) if try_move_piece(move)
+        process_outcome(move, try_move_piece(move))
       rescue => e
         puts e.message
         retry
@@ -58,6 +59,21 @@ class Game
     raise IllegalMoveError.new unless @board.move_legal?(from, to)
     raise CheckError.new if @board.leaves_self_in_check?(from, to, @current_player.color)
     @board.move_piece(from, to)
+  end
+
+  def process_outcome(move, move_outcome)
+    case move_outcome
+    when :pawn_promotion
+      promote_pawn(move)
+    when :pawn_move, :capture
+      reset_move_counter
+    else
+      @move_counter += 1
+    end
+  end
+
+  def reset_move_counter
+    @move_counter = 0
   end
 
   def valid_format?(move)
@@ -79,7 +95,8 @@ class Game
       puts e.message
       retry
     end
-    new_position = (move.split.map { |e| e }).last
+    reset_move_counter
+    new_position = (move.split.map { |elem| elem }).last
     @board.promote_pawn(piece, translate_move_notation(new_position))
   end
 
