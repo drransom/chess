@@ -13,6 +13,7 @@ class Game
   def play_chess(moves = [])
     @moves = moves
     @move_counter = 0
+    @fifty_moves = false
     initialize_game
     result = play_game
     display_result(result)
@@ -69,12 +70,22 @@ class Game
       reset_move_counter
     else
       @move_counter += 1
+      validate_fifty_move_rule
     end
-    puts "move counter is #{@move_counter}"
   end
 
   def reset_move_counter
     @move_counter = 0
+  end
+
+  def fifty_move_stalemate?
+    @fifty_moves
+  end
+
+  def validate_fifty_move_rule
+    if @move_counter >= 100 # "moves" count both players
+      @fifty_move_stalemate = @current_player.request_fifty_move_stalemate
+    end
   end
 
   def valid_format?(move)
@@ -106,7 +117,9 @@ class Game
   end
 
   def game_over?
-    @board.checkmate?(@current_player.color) || @board.stalemate?(@current_player.color)
+    @board.checkmate?(@current_player.color) ||
+    @board.stalemate?(@current_player.color) ||
+    fifty_move_stalemate?
   end
 
   def display_board
@@ -123,7 +136,7 @@ class Game
 
   def display_winner
     display_board
-    if @board.stalemate?(@current_player.color)
+    if @board.stalemate?(@current_player.color) || fifty_move_stalemate?
       puts "Stalemate."
     else
       flip_current_player
@@ -157,6 +170,12 @@ class HumanPlayer
     puts "Congratulations! You get to promote a pawn!"
     puts "Choose bishop, knight, queen, or rook."
     gets.downcase.chomp
+  end
+
+  def request_fifty_move_stalemate
+    puts "You may now request a stalemate thanks to the fifty move rule."
+    puts "Enter 'y' for stalemate, or any other key to continue playing."
+    gets[0] == 'y'
   end
 end
 
