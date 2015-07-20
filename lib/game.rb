@@ -70,6 +70,7 @@ class Game
     else
       @move_counter += 1
     end
+    puts "move counter is #{@move_counter}"
   end
 
   def reset_move_counter

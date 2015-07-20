@@ -85,6 +85,7 @@ class Board
     if !ignore_castle && castle?(self[from], to)
       process_castle(from, to)
     else
+      old_piece = self[to]
       self[to] = self[from]
       current_piece = self[to]
       self[from] = nil
@@ -93,6 +94,10 @@ class Board
       current_piece.update_has_moved
       if self[to].is_a?(Pawn) && (to[0] % 7 == 0)
         :pawn_promotion
+      elsif old_piece
+        :capture
+      elsif self[to].is_a?(Pawn)
+        :pawn_move
       else
         false
       end
