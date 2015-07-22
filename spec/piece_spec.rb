@@ -1,47 +1,50 @@
 require 'spec_helper'
 require 'board'
 require 'pieces'
+require 'byebug'
 
 piece_classes = [King, Queen, Rook, Bishop, Knight, Pawn]
 
 describe Piece do
   piece_classes.each_with_index do |piece_class, idx|
     context piece_class do
+      random_position = [rand(8), rand(8)]
+      other_position = [(random_position[0] + 1) % 8, (random_position[1] + 3) % 8]
       let(:board) { double("board", :[]= => true) }
-      let(:piece) { piece_class.new(:white, board, [0, 0]) }
+      let(:piece) { piece_class.new(:white, board, random_position) }
 
-      before(:example) do
-        piece.position = [0, 0]
+      before(:each) do
+        piece.position = random_position
       end
 
       it "is itself at the same position" do
-        expect piece.same_piece_at_same_position?(piece).to be_true
+        expect(piece.same_piece_at_same_position?(piece)).to be_truthy
       end
 
-      it "is still itself if it changes positions" do
-        piece.position = [1, 1]
-        expect piece.same_piece_at_same_position?(piece).to be_true
+      it "is still the same as itself if it changes positions" do
+        piece.position = other_position
+        expect(piece.same_piece_at_same_position?(piece)).to be_truthy
       end
 
       it "is the same as a piece of the same color at the same position" do
-        other_piece = King.new(:white, board, [0, 0])
-        expect piece.same_piece_at_same_position(other_piece).to be_false
+        other_piece = piece_class.new(:white, board, random_position)
+        expect(piece.same_piece_at_same_position?(other_piece)).to be_truthy
       end
 
       it "is different from a piece of a different color at the same position" do
-        other_piece = King.new(:black, board, [0, 0])
-        expect piece.same_piece_at_same_position(other_piece).to be_false
+        other_piece = piece_class.new(:black, board, random_position)
+        expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
       end
 
       it "is different from a piece of the same color at a different position" do
-        other_piece = King.new(:white, board, [1, 1])
-        expect piece.same_piece_at_same_position(other_piece).to be_false
+        other_piece = piece_class.new(:white, board, other_position)
+        expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
       end
 
       it "is different from a different piece or no piece" do
-        other_piece = piece_classes[(idx + 1) % piece_classes.length].new(:white, board, [0, 0])
-        expect piece.same_piece_at_same_position?(other_piece).to be_false
-        expect piece.same_piece_at_same_position?(nil).to be_false
+        other_piece = piece_classes[(idx + 1) % piece_classes.length].new(:white, board, random_position)
+        expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
+        expect(piece.same_piece_at_same_position?(nil)).to be_falsy
       end
 
     end
@@ -49,12 +52,13 @@ describe Piece do
 
   [King, Rook].each do |piece_class|
     context piece_class do
+      let(:board) { double("board", :[]= => true) }
+      let(:piece) { piece_class.new(:white, board, [0, 0]) }
+
       it "is different from the same piece that has moved" do
-        let(:board) { double("board", :[]= => true) }
-        let(:piece) { piece_class.new(:white, board, [0, 0]) }
         other_piece = piece_class.new(:white, board, [0, 0])
         other_piece.update_has_moved
-        expect piece.same_piece_at_same_position?(other_piece).to be_false
+        expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
       end
     end
   end
