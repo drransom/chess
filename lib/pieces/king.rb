@@ -69,9 +69,13 @@ class King < Piece
     @has_moved = true
   end
 
-  def same_piece_at_same_position?(other)
+  def ==(other)
     super(other) && (has_moved? == other.has_moved?)
   end
+
+  # def hash
+  #   (super ^ has_moved?.hash).hash
+  # end
 
 
 end

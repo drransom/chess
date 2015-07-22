@@ -20,9 +20,13 @@ class Piece
   def update_has_moved
   end
 
-  def same_piece_at_same_position?(other)
+  def ==(other)
     self.class == other.class &&
     color == other.color &&
     position == other.position
   end
+
+  # def hash
+  #   [self.class, color, position].hash
+  # end
 end
