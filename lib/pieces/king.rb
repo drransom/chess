@@ -73,9 +73,9 @@ class King < Piece
     super(other) && (has_moved? == other.has_moved?)
   end
 
-  # def hash
-  #   (super ^ has_moved?.hash).hash
-  # end
+  def hash
+    (super ^ has_moved?.hash).hash
+  end
 
 
 end
