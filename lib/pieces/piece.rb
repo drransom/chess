@@ -26,7 +26,7 @@ class Piece
     position == other.position
   end
 
-  # def hash
-  #   [self.class, color, position].hash
-  # end
+  def hash
+    [self.class, color, position].hash
+  end
 end
