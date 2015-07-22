@@ -157,7 +157,7 @@ describe Board do
       expect(b.clone).to be_a Board
     end
 
-    it 'cloned boards are ==' do
+    it 'cloned boards are == to original board' do
       expect(b.clone == b).to be_truthy
     end
 
