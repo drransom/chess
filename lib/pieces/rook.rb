@@ -30,4 +30,8 @@ class Rook < Piece
     @has_moved
   end
 
+  def same_piece_at_same_position?(other)
+    super(other) && has_moved? == other.has_moved?
+  end
+
 end
