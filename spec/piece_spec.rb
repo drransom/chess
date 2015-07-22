@@ -47,13 +47,15 @@ describe Piece do
     end
   end
 
-  context King do |variable|
-    it "is different from the same piece that has moved" do
-      let(:board) { double("board", :[]= => true) }
-      let(:king) { King.new(:white, board, [0, 0]) }
-      other_king = King.new(:white, board, [0, 0])
-      other_king.update_has_moved
-      expect king.same_piece_at_same_position?(other_king).to be_false
+  [King, Rook].each do |piece_class|
+    context piece_class do
+      it "is different from the same piece that has moved" do
+        let(:board) { double("board", :[]= => true) }
+        let(:piece) { piece_class.new(:white, board, [0, 0]) }
+        other_piece = piece_class.new(:white, board, [0, 0])
+        other_piece.update_has_moved
+        expect piece.same_piece_at_same_position?(other_piece).to be_false
+      end
     end
   end
 end
