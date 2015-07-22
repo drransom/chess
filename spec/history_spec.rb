@@ -1,0 +1,5 @@
+require 'spec_helper'
+require 'game'
+require 'board'
+require 'pieces'
+require 'chess_history'
