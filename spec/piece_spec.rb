@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'board'
 require 'pieces'
-require 'byebug'
 
 piece_classes = [King, Queen, Rook, Bishop, Knight, Pawn]
 
@@ -51,7 +50,7 @@ describe Piece do
   end
 
   [King, Rook].each do |piece_class|
-    context piece_class do
+    context ( "#{piece_class}" + '#same_piece_at_same_position?') do
       let(:board) { double("board", :[]= => true) }
       let(:piece) { piece_class.new(:white, board, [0, 0]) }
 
