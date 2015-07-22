@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'board'
 require 'pieces'
 
+
 describe Board do
   subject(:b) { Board.new }
 
@@ -127,11 +128,26 @@ describe Board do
 
     it 'finds that two boards with different setups are not ==' do
       b2 = Board.new(false)
-      b2[[1, 4]] = Rook.new(:black, b2, [1, 4])
-      b2[[0, 4]] = Rook.new(:black, b2, [0, 4])
+      b2[[1, 4]] = Rook.new(:black, b2, [4, 4])
       b2[[4, 6]] = King.new(:black, b2, [4, 6])
       b2[[0, 0]] = King.new(:white, b2, [0, 0])
       expect(b == b2).to be_falsy
+    end
+
+  end
+
+  describe '#hash' do
+    it 'finds that two boards with identical setups have the same hash' do
+      b2 = Board.new
+      expect(b.hash).to eq(b2.hash)
+    end
+
+    it 'finds that two boards with different setups have different hashes' do
+      b2 = Board.new(false)
+      b2[[1, 4]] = Rook.new(:black, b2, [4, 4])
+      b2[[4, 6]] = King.new(:black, b2, [4, 6])
+      b2[[0, 0]] = King.new(:white, b2, [0, 0])
+      expect(b.hash).not_to eq(b2.hash)
     end
 
   end
