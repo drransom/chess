@@ -178,7 +178,7 @@ class Board
     end
   end
 
-  def eq(other_board)
+  def eql?(other_board)
     self == other_board
   end
 

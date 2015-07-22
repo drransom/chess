@@ -26,7 +26,7 @@ class Piece
     position == other.position
   end
 
-  def eq(other_piece)
+  def eql?(other_piece)
     self == other_piece
   end
 
