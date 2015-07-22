@@ -7,7 +7,7 @@ piece_classes = [King, Queen, Rook, Bishop, Knight, Pawn]
 
 describe Piece do
   piece_classes.each_with_index do |piece_class, idx|
-    context piece_class do
+    context ( "#{piece_class}" + '#same_piece_at_same_position?')  do
       random_position = [rand(8), rand(8)]
       other_position = [(random_position[0] + 1) % 8, (random_position[1] + 3) % 8]
       let(:board) { double("board", :[]= => true) }
