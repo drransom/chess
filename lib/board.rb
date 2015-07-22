@@ -178,6 +178,10 @@ class Board
     end
   end
 
+  def eq(other_board)
+    self == other_board
+  end
+
   def hash
     @grid.map { |piece| piece.hash }.hash
   end

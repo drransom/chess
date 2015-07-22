@@ -152,6 +152,17 @@ describe Board do
 
   end
 
+  describe '#clone' do
+    it 'can clone a board' do
+      expect(b.clone).to be_a Board
+    end
+
+    it 'cloned boards are ==' do
+      expect(b.clone == b).to be_truthy
+    end
+
+  end
+
   it 'displays nicely' do
     # this is for you :)
     b.display
