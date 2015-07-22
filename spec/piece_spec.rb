@@ -44,12 +44,13 @@ describe Piece do
         other_piece = piece_class.new(:white, board, other_position)
         third_piece = piece_class.new(:white, other_board, other_position)
         expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
-        expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
+        expect(piece.same_piece_at_same_position?(third_piece)).to be_falsy
       end
 
       it "is different from a different piece or no piece" do
-        other_piece = piece_classes[(idx + 1) % piece_classes.length].new(:white, board, random_position)
-        third_piece = piece_classes[(idx + 1) % piece_classes.length].new(:white, other_board, random_position)
+        new_class = piece_classes[(idx + 1) % piece_classes.length]
+        other_piece = new_class.new(:white, board, random_position)
+        third_piece = new_class.new(:white, other_board, random_position)
         expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
         expect(piece.same_piece_at_same_position?(third_piece)).to be_falsy
         expect(piece.same_piece_at_same_position?(nil)).to be_falsy
