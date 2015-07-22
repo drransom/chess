@@ -10,6 +10,7 @@ describe Piece do
       random_position = [rand(8), rand(8)]
       other_position = [(random_position[0] + 1) % 8, (random_position[1] + 3) % 8]
       let(:board) { double("board", :[]= => true) }
+      let(:other_board) { double("board", :[]= => true)}
       let(:piece) { piece_class.new(:white, board, random_position) }
 
       before(:each) do
@@ -27,22 +28,30 @@ describe Piece do
 
       it "is the same as a piece of the same color at the same position" do
         other_piece = piece_class.new(:white, board, random_position)
+        third_piece = piece_class.new(:white, other_board, random_position)
         expect(piece.same_piece_at_same_position?(other_piece)).to be_truthy
+        expect(piece.same_piece_at_same_position?(third_piece)).to be_truthy
       end
 
       it "is different from a piece of a different color at the same position" do
         other_piece = piece_class.new(:black, board, random_position)
+        third_piece = piece_class.new(:black, other_board, random_position)
         expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
+        expect(piece.same_piece_at_same_position?(third_piece)).to be_falsy
       end
 
       it "is different from a piece of the same color at a different position" do
         other_piece = piece_class.new(:white, board, other_position)
+        third_piece = piece_class.new(:white, other_board, other_position)
+        expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
         expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
       end
 
       it "is different from a different piece or no piece" do
         other_piece = piece_classes[(idx + 1) % piece_classes.length].new(:white, board, random_position)
+        third_piece = piece_classes[(idx + 1) % piece_classes.length].new(:white, other_board, random_position)
         expect(piece.same_piece_at_same_position?(other_piece)).to be_falsy
+        expect(piece.same_piece_at_same_position?(third_piece)).to be_falsy
         expect(piece.same_piece_at_same_position?(nil)).to be_falsy
       end
 
