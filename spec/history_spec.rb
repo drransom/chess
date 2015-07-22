@@ -61,17 +61,17 @@ describe ChessHistory do
       3.times do
         boards.shuffle!
         history = ChessHistory.new
-        boards.each { |board| history.updateHistory(board) }
+        boards.each { |board| history.update_history(board) }
         expect(history.three_repeats?).to be_falsy
-        history.updateHistory(MockBoard.new)
+        history.update_history(MockBoard.new)
         expect(history.three_repeats?).to be_truthy
       end
     end
 
     it 'says there are not three repeats if the repeated position is not the most recent' do
       history = ChessHistory.new
-      3.times { history.updateHistory(MockBoard.new) }
-      history.updateHistory(MockBoard.new(1))
+      3.times { history.update_history(MockBoard.new) }
+      history.update_history(MockBoard.new(1))
       expect(history.three_repeats?).to be_falsy
     end
 
