@@ -170,6 +170,17 @@ class Board
     move_piece(from, to, true)
   end
 
+  def ==(other_board)
+    (0...8).all? do |row|
+      (0...8).all? do |col|
+        self[[row, col]] == other_board[[row, col]]
+      end
+    end
+  end
+
+  def hash
+    @grid.map { |piece| piece.hash }.hash
+  end
 
 
   private
