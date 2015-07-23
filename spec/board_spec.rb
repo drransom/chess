@@ -278,7 +278,48 @@ describe Board do
       b.move_piece([6, 6], [4, 6])
       expect(b.en_passant_available?(:black)).to be_falsy
     end
+  end
 
+  describe 'en_passant_equivalent?' do
+    subject(:board1) { Board.new(false) }
+    let(:board2) { Board.new(false) }
+    let(:setup_board) do
+      Proc.new do |b|
+        b[[0, 4]] = King.new(:black, b, [0, 4])
+        b[[7, 4]] = King.new(:white, b, [7, 4])
+        defending_pawn1 = Pawn.new(:black, b, [1, 6])
+        defending_pawn2 = Pawn.new(:black, b, [1, 4])
+        attacking_pawn =  Pawn.new(:white, b, [3, 5])
+        [defending_pawn1, defending_pawn2, attacking_pawn].each do |pawn|
+          b[pawn.position] = pawn
+        end
+      end
+    end
+
+    before(:each) do
+      setup_board.call(board1)
+      setup_board.call(board2)
+    end
+
+    it "starts equivalent" do
+      expect(board1.en_passant_equivalent?(board2)).to be_truthy
+    end
+
+    it "remains equivalent when the pawns move the same way" do
+      board1.move_piece([1, 6], [3, 6])
+      board2.move_piece([1, 6], [3, 6])
+      expect(board1.en_passant_equivalent?(board2)).to be_truthy
+    end
+
+    it "is not equivalent when the pawns move in different orders" do
+      board1.move_piece([1, 6], [3, 6])
+      board1.move_piece([0, 4], [0, 5])
+      board1.move_piece([1, 4], [3, 4])
+      board2.move_piece([1, 4], [3, 4])
+      board2.move_piece([0, 4], [0, 5])
+      board2.move_piece([1, 6], [3, 6])
+      expect(board1.en_passant_equivalent?(board2)).to be_falsy
+    end
   end
 
   it 'displays nicely' do

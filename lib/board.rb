@@ -181,11 +181,21 @@ class Board
     equivalent = Proc.new do | piece1, piece2 |
       (!piece1 && !piece2) || piece1.equivalent?(piece2, can_castle_colors)
     end
-    (0...8).all? do |row|
+    all_equivalent = (0...8).all? do |row|
       (0...8).all? do |col|
         equivalent.call(self[[row, col]], other_board[[row, col]])
       end
     end
+
+    en_passant_proc = Proc.new do |color|
+      if en_passant_available?(color)
+        @en_passant[color] == other_board.en_passant[color] &&
+        @en_passant[to] == other_board.en_passant[to]
+      else
+        true
+      end
+    end
+    all_equivalent && en_passant_proc(:white) && en_passant_proc(:black)
   end
 
   def eql?(other_board)
@@ -201,7 +211,9 @@ class Board
         Piece.instance_method(:hash).bind(piece).call
       end
     end
-    @grid.map { |piece| hash_proc.call(piece) }.hash
+    [ @grid.map { |piece| hash_proc.call(piece) },
+      en_passant_available?(:white), en_passant_available?(:black)
+    ].hash
   end
 
   #returns if a player has enough unmoved pieces to castle
