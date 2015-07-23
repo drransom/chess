@@ -37,8 +37,12 @@ class Board
   end
 
   def in_check?(color)
-    king = @grid.find { |piece| piece.is_a?(King) && piece.color == color }
+    king = find_king(color)
     king ? threatened?(king.position, king.color) : false
+  end
+
+  def find_king(color)
+    @grid.find { |piece| piece.is_a?(King) && piece.color == color }
   end
 
   def occupied?(position)
@@ -186,6 +190,12 @@ class Board
     @grid.map { |piece| piece.hash }.hash
   end
 
+  #returns if a player has enough unmoved pieces to castle
+  def can_castle?(color)
+    rooks = @grid.select { |piece| piece.class == Rook && piece.color == color }
+    !find_king(color).has_moved? && rooks.any? { |rook| !rook.has_moved? }
+  end
+
 
   private
 
@@ -248,6 +258,9 @@ class Board
       King
     end.new(color, self, position)
   end
+
+
+
 
   def find_all_pieces(color)
     @grid.select { |piece| piece && piece.color == color }

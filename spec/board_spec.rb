@@ -179,7 +179,7 @@ describe Board do
       b2[[7, 7]] = Rook.new(:white, b2, [7, 7])
       b2[[7, 4]] = King.new(:white, b2, [7, 4])
       b2.move_piece([0, 0], [0, 1])
-      expect(b2.can_castle?(:black).to be_truthy)
+      expect(b2.can_castle?(:black)).to be_truthy
     end
 
     it "cannot castle when both rooks have moved" do
@@ -203,7 +203,7 @@ describe Board do
       b2[[7, 4]] = King.new(:white, b2, [7, 4])
       b2.move_piece([0, 4], [0, 5])
       expect(b2.can_castle?(:black)).to be_falsy
-      bw.move_piece([0, 5], [0, 4])
+      b2.move_piece([0, 5], [0, 4])
       expect(b2.can_castle?(:black)).to be_falsy
     end
 
