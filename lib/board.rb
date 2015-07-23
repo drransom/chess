@@ -1,6 +1,7 @@
 require_relative 'pieces'
 require_relative 'game'
 require 'colorize'
+require 'byebug'
 
 class Board
   include ChessHelper
@@ -209,6 +210,15 @@ class Board
     !find_king(color).has_moved? && rooks.any? { |rook| !rook.has_moved? }
   end
 
+  def en_passant_available?(color) #color is color of player who can capture
+    other_color = (color == :black) ? :white : :black
+    return false unless @en_passant[other_color]
+    pawns = @grid.select { |piece| piece.is_a?(Pawn) && piece.color == color }
+    pawns.any? do |pawn|
+      pawn.attack_spaces.include?(@en_passant[other_color])
+    end
+  end
+
 
   private
 
@@ -280,6 +290,5 @@ class Board
     piece.is_a?(King) && (to[1] - piece.position[1].abs > 1)
   end
 
-  def valid_en_passant_capture?(color)
-  end
+
 end

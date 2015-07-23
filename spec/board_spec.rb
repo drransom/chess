@@ -231,6 +231,56 @@ describe Board do
     end
   end
 
+  describe '#en_passant_available?' do
+    subject(:b) { Board.new(false) }
+    let(:attacking_pawn) { Pawn.new(:black, b, [4, 5]) }
+    let(:add_attacking_pawn) do
+      Proc.new { b[attacking_pawn.position] = attacking_pawn }
+    end
+
+    before(:each) do
+      b[[0, 4]] = King.new(:black, b, [0, 4])
+      b[[7, 4]] = King.new(:white, b, [7, 4])
+      defending_pawn = Pawn.new(:white, b, [6, 6])
+      b[[6, 6]] = defending_pawn
+    end
+
+    it "when no pawns have moved" do
+      add_attacking_pawn.call
+      expect(b.en_passant_available?(:white)).to be_falsy
+      expect(b.en_passant_available?(:black)).to be_falsy
+    end
+
+    it "pawn has moved one space" do
+      add_attacking_pawn.call
+      b.move_piece([6, 6], [4, 6])
+      expect(b.en_passant_available?(:black)).to be_falsy
+      expect(b.en_passant_available?(:white)).to be_falsy
+    end
+
+    it "pawn has moved two spaces" do
+      add_attacking_pawn.call
+      b.move_piece([6, 6], [4, 6])
+      expect(b.en_passant_available?(:black)).to be_truthy
+    end
+
+    it "turn passes after pawn advances" do
+      add_attacking_pawn.call
+      b.move_piece([6, 6], [4, 6])
+      b.move_piece([0, 4], [0, 5])
+      b.move_piece([7, 4], [7, 3])
+      expect(b.en_passant_available?(:black)).to be_falsy
+    end
+
+    it "no pawn can capture en passant" do
+      attacking_pawn = Pawn.new(:black, b, [3, 5])
+      b[attacking_pawn.position] = attacking_pawn
+      b.move_piece([6, 6], [4, 6])
+      expect(b.en_passant_available?(:black)).to be_falsy
+    end
+
+  end
+
   it 'displays nicely' do
     # this is for you :)
     b.display
