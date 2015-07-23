@@ -163,6 +163,59 @@ describe Board do
 
   end
 
+  describe '#can_castle' do
+
+    it "can castle when initialized" do
+      expect(b.can_castle?(:white)).to be_truthy
+      expect(b.can_castle?(:black)).to be_truthy
+    end
+
+    it "can castle when one rook has moved" do
+      b2 = Board.new(false)
+      b2[[0, 0]] = Rook.new(:black, b2, [0, 0])
+      b2[[0, 7]] = Rook.new(:black, b2, [0, 7])
+      b2[[0, 4]] = King.new(:black, b2, [0, 4])
+      b2[[7, 0]] = Rook.new(:white, b2, [7, 0])
+      b2[[7, 7]] = Rook.new(:white, b2, [7, 7])
+      b2[[7, 4]] = King.new(:white, b2, [7, 4])
+      b2.move_piece([0, 0], [0, 1])
+      expect(b2.can_castle?(:black).to be_truthy)
+    end
+
+    it "cannot castle when both rooks have moved" do
+      b2 = Board.new(false)
+      b2[[0, 0]] = Rook.new(:black, b2, [0, 0])
+      b2[[0, 7]] = Rook.new(:black, b2, [0, 7])
+      b2[[0, 4]] = King.new(:black, b2, [0, 4])
+      b2[[7, 0]] = Rook.new(:white, b2, [7, 0])
+      b2[[7, 7]] = Rook.new(:white, b2, [7, 7])
+      b2[[7, 4]] = King.new(:white, b2, [7, 4])
+      b2.move_piece([0, 0], [0, 1])
+      b2.move_piece([0, 7], [0, 6])
+      expect(b2.can_castle?(:black)).to be_falsy
+    end
+
+    it "cannot castle when the king has moved" do
+      b2 = Board.new(false)
+      b2[[0, 0]] = Rook.new(:black, b2, [0, 0])
+      b2[[0, 4]] = King.new(:black, b2, [0, 4])
+      b2[[7, 0]] = Rook.new(:white, b2, [7, 0])
+      b2[[7, 4]] = King.new(:white, b2, [7, 4])
+      b2.move_piece([0, 4], [0, 5])
+      expect(b2.can_castle?(:black)).to be_falsy
+      bw.move_piece([0, 5], [0, 4])
+      expect(b2.can_castle?(:black)).to be_falsy
+    end
+
+    it "cannot castle if there are no rooks" do
+      b2 = Board.new(false)
+      b2[[0, 0]] = Rook.new(:black, b2, [0, 0])
+      b2[[0, 4]] = King.new(:black, b2, [0, 4])
+      b2[[7, 4]] = King.new(:white, b2, [7, 4])
+      expect(b2.can_castle?(:white)).to be_falsy
+    end
+  end
+
   it 'displays nicely' do
     # this is for you :)
     b.display
