@@ -77,5 +77,14 @@ class King < Piece
     (super ^ has_moved?.hash).hash
   end
 
+  def equivalent?(other_piece, can_castle_colors = [])
+    if can_castle_colors.include?(color)
+      self == other_piece
+    else
+      self.class == other_piece.class &&
+      self.class.superclass.instance_method(:==).bind(self).call(other_piece)
+    end
+  end
+
 
 end

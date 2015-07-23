@@ -64,6 +64,9 @@ describe Piece do
         expect(piece ==(nil)).to be_falsy
       end
 
+
+
+
     end
   end
 
@@ -77,6 +80,28 @@ describe Piece do
         other_piece.update_has_moved
         expect(piece == other_piece).to be_falsy
         expect(piece.hash).to_not eq(other_piece.hash)
+      end
+    end
+
+    context ( "#{piece_class}" + '#equivalent?')  do
+      let(:board) { double("board", :[]= => true) }
+      let(:piece) { piece_class.new(:white, board, [0, 0]) }
+
+      it "is equivalent if the other piece has not moved" do
+        other_piece = piece_class.new(:white, board, [0, 0])
+        expect(piece.equivalent?(other_piece, [:white])).to be_truthy
+      end
+
+      it "is not equivalent if the other piece has moved" do
+        other_piece = piece_class.new(:white, board, [0, 0])
+        other_piece.update_has_moved
+        expect(piece.equivalent?(other_piece, [:white])).to be_falsy
+      end
+
+      it "is equivalent if no class is given" do
+        other_piece = piece_class.new(:white, board, [0, 0])
+        other_piece.update_has_moved
+        expect(piece.equivalent?(other_piece)).to be_truthy
       end
     end
   end

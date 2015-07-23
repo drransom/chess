@@ -33,4 +33,9 @@ class Piece
   def hash
     [self.class, color, position].hash
   end
+
+  def equivalent?(other_piece, can_castle_colors = [])
+    self == other_piece
+  end
+
 end
