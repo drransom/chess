@@ -175,6 +175,8 @@ class Board
 
   def ==(other_board)
     can_castle_colors = [:white, :black].select { |color| can_castle?(color) }
+    other_can_castle_colors = [:white, :black].select { |color| other_board.can_castle?(color) }
+    return false unless can_castle_colors == other_can_castle_colors
     equivalent = Proc.new do | piece1, piece2 |
       (!piece1 && !piece2) || piece1.equivalent?(piece2, can_castle_colors)
     end

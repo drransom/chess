@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'board'
 require 'pieces'
-
+require 'byebug'
 
 describe Board do
   subject(:b) { Board.new }
@@ -128,10 +128,25 @@ describe Board do
 
     it 'finds that two boards with different setups are not ==' do
       b2 = Board.new(false)
-      b2[[1, 4]] = Rook.new(:black, b2, [4, 4])
+      b2[[4, 4]] = Rook.new(:black, b2, [4, 4])
       b2[[4, 6]] = King.new(:black, b2, [4, 6])
       b2[[0, 0]] = King.new(:white, b2, [0, 0])
       expect(b == b2).to be_falsy
+    end
+
+    it 'finds that boards are not == if a king has moved on one but not the other' do
+      b2 = Board.new(false)
+      b2[[0, 4]] = King.new(:black, b2, [0, 4])
+      b2[[0, 0]] = Rook.new(:black, b2, [0, 0])
+      b2[[7, 4]] = King.new(:white, b2, [7, 4])
+      b3 = Board.new(false)
+      b3[[0, 4]] = King.new(:black, b3, [0, 4])
+      b3[[0, 0]] = Rook.new(:black, b3, [0, 0])
+      b3[[7, 4]] = King.new(:white, b3, [7, 4])
+      expect(b2 == b3).to be_truthy
+      b2.move_piece([0, 4], [0, 5])
+      b2.move_piece([0, 5], [0, 4])
+      expect(b2 == b3).to be_falsy
     end
 
   end
