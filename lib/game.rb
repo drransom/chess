@@ -3,9 +3,9 @@ require_relative '../vendor/keypress'
 require_relative 'errors'
 
 class Game
-  def initialize
-    @white_player = HumanPlayer.new(:white)
-    @black_player = HumanPlayer.new(:black)
+  def initialize(options = {})
+    @white_player = options[:white] || HumanPlayer.new(:white)
+    @black_player = options[:black] || HumanPlayer.new(:black)
     @current_player = @white_player
     @board = Board.new
   end
@@ -31,7 +31,6 @@ class Game
 
   def play_game
     until game_over?
-      @board.reset_en_passant(@current_player.color)
       display_board
       begin
         move = @moves.empty? ? @current_player.play_turn : @moves.shift

@@ -170,9 +170,9 @@ class Board
 
   def process_castle(from, to)
     if to[1] > from[1]
-      move_piece(to, add_arrays(from, [0, 1]))
+      move_piece(add_arrays(to, [0, 1]), add_arrays(from, [0, 1]))
     else
-      move_piece(to, add_arrays(from, [0, -1]))
+      move_piece(add_arrays(to, [0, -1]), add_arrays(from, [0, -2]))
     end
     move_piece(from, to, true)
   end
@@ -318,7 +318,7 @@ class Board
   end
 
   def castle?(piece, to)
-    piece.is_a?(King) && (to[1] - piece.position[1].abs > 1)
+    piece.is_a?(King) && ((to[1] - piece.position[1]).abs > 1)
   end
 
 

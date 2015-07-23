@@ -45,7 +45,7 @@ class King < Piece
     test_position = add_arrays(@position, [0, -4])
     if @board.valid_rook?(test_position, self.color) &&
               @board.all_valid?(self, [[0, -3], [0, -2], [0, -1]])
-      test_position
+      add_arrays(@position, [0, -3])
     else
       nil
     end
@@ -55,7 +55,7 @@ class King < Piece
     test_position = add_arrays(@position, [0, 3])
     if @board.valid_rook?(test_position, self.color) &&
               @board.all_valid?(self, [[0, 1], [0, 2]])
-      test_position
+      add_arrays(@position, [0, 2])
     else
       nil
     end
