@@ -27,7 +27,6 @@ class Board
     @grid[(row * 8) + col] = new_value
   end
 
-
   def stalemate?(color)
     !in_check?(color) && !has_legal_move?(color)
   end
@@ -175,9 +174,13 @@ class Board
   end
 
   def ==(other_board)
+    can_castle_colors = [:white, :black].select { |color| can_castle?(color) }
+    equivalent = Proc.new do | piece1, piece2 |
+      (!piece1 && !piece2) || piece1.equivalent?(piece2, can_castle_colors)
+    end
     (0...8).all? do |row|
       (0...8).all? do |col|
-        self[[row, col]] == other_board[[row, col]]
+        equivalent.call(self[[row, col]], other_board[[row, col]])
       end
     end
   end
@@ -187,7 +190,15 @@ class Board
   end
 
   def hash
-    @grid.map { |piece| piece.hash }.hash
+    can_castle_colors = [:white, :black].select { |color| can_castle?(color) }
+    hash_proc = Proc.new do |piece|
+      if !piece || can_castle_colors.include?(piece.color)
+        piece.hash
+      else
+        Piece.instance_method(:hash).bind(piece).call
+      end
+    end
+    @grid.map { |piece| hash_proc.call(piece) }.hash
   end
 
   #returns if a player has enough unmoved pieces to castle
@@ -259,14 +270,14 @@ class Board
     end.new(color, self, position)
   end
 
-
-
-
   def find_all_pieces(color)
     @grid.select { |piece| piece && piece.color == color }
   end
 
   def castle?(piece, to)
     piece.is_a?(King) && (to[1] - piece.position[1].abs > 1)
+  end
+
+  def valid_en_passant_capture?(color)
   end
 end
