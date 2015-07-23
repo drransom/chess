@@ -231,6 +231,18 @@ class Board
     end
   end
 
+  def en_passant_equivalent?(other)
+    if [:white, :black].any? do |color|
+        [self, other].any? do |board|
+          board.en_passant_available?(color)
+        end
+      end
+      @en_passant == other.en_passant
+    else
+      true
+    end
+  end
+
 
   private
 
