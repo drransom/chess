@@ -7,7 +7,7 @@ class Game
     @white_player = options[:white] || HumanPlayer.new(:white)
     @black_player = options[:black] || HumanPlayer.new(:black)
     @current_player = @white_player
-    @board = Board.new
+    @board = options[:board] || Board.new
   end
 
   def play_chess(moves = [])
