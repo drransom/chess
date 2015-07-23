@@ -152,6 +152,17 @@ describe Board do
   end
 
   describe '#hash' do
+    en_passant_setup = Proc.new do |b|
+      b[[0, 4]] = King.new(:black, b, [0, 4])
+      b[[7, 4]] = King.new(:white, b, [7, 4])
+      defending_pawn1 = Pawn.new(:black, b, [1, 6])
+      defending_pawn2 = Pawn.new(:black, b, [1, 4])
+      attacking_pawn =  Pawn.new(:white, b, [3, 5])
+      [defending_pawn1, defending_pawn2, attacking_pawn].each do |pawn|
+        b[pawn.position] = pawn
+      end
+    end
+
     it 'finds that two boards with identical setups have the same hash' do
       b2 = Board.new
       expect(b.hash).to eq(b2.hash)
@@ -163,6 +174,35 @@ describe Board do
       b2[[4, 6]] = King.new(:black, b2, [4, 6])
       b2[[0, 0]] = King.new(:white, b2, [0, 0])
       expect(b.hash).not_to eq(b2.hash)
+    end
+
+    it 'the same en passant status produces the same hash' do
+      b1 = Board.new(false)
+      b2 = Board.new(false)
+      [b1, b2].each do |b|
+        en_passant_setup.call(b)
+      end
+
+      b1.move_piece([1, 6], [3, 6])
+      b2.move_piece([1, 6], [3, 6])
+      expect(b1.hash).to eq(b2.hash)
+    end
+
+    it 'different en passant statuses produce different hashes' do
+      b1 = Board.new(false)
+      b2 = Board.new(false)
+      [b1, b2].each do |b|
+        en_passant_setup.call(b)
+      end
+
+      b1.move_piece([1, 6], [3, 6])
+      b1.move_piece([0, 4], [0, 5])
+      b1.move_piece([1, 4], [3, 4])
+      b2.move_piece([1, 4], [3, 4])
+      b2.move_piece([0, 4], [0, 5])
+      b2.move_piece([1, 6], [3, 6])
+
+      expect(b1.hash).not_to eq(b2.hash)
     end
 
   end
@@ -253,7 +293,7 @@ describe Board do
 
     it "pawn has moved one space" do
       add_attacking_pawn.call
-      b.move_piece([6, 6], [4, 6])
+      b.move_piece([6, 6], [5, 6])
       expect(b.en_passant_available?(:black)).to be_falsy
       expect(b.en_passant_available?(:white)).to be_falsy
     end

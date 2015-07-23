@@ -109,10 +109,13 @@ class Board
   end
 
   def process_en_passant (piece, from, to)
+    other_color = Game.other_color(piece.color)
     if piece.is_a?(Pawn) && ((to[0] - from[0]).abs == 2)
       allow_en_passant(piece, from, to)
-    elsif self[to].is_a?(Pawn) && @en_passant[Game.other_color(piece.color)] == to
+    elsif self[to].is_a?(Pawn) && @en_passant[other_color] == to
       self[@en_passant[:target].position] = nil
+    else
+      reset_en_passant
     end
   end
 
@@ -138,8 +141,8 @@ class Board
     display_string
   end
 
-  def reset_en_passant(color)
-    @en_passant[color] = nil
+  def reset_en_passant
+    @en_passant.keys.each { |key| @en_passant[key] = nil }
   end
 
   def promote_pawn(sym, position)
@@ -195,7 +198,7 @@ class Board
         true
       end
     end
-    all_equivalent && en_passant_proc(:white) && en_passant_proc(:black)
+    all_equivalent && en_passant_proc.call(:white) && en_passant_proc.call(:black)
   end
 
   def eql?(other_board)
@@ -211,8 +214,13 @@ class Board
         Piece.instance_method(:hash).bind(piece).call
       end
     end
+    if en_passant_available?(:white) || en_passant_available?(:black)
+      en_passant_element = @en_passant
+    else
+      en_passant_element = {}
+    end
     [ @grid.map { |piece| hash_proc.call(piece) },
-      en_passant_available?(:white), en_passant_available?(:black)
+      en_passant_element
     ].hash
   end
 
@@ -242,7 +250,6 @@ class Board
       true
     end
   end
-
 
   private
 
