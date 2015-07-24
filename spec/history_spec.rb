@@ -40,7 +40,7 @@ describe ChessHistory do
 
     it 'recognizes three repeats when updated with items that are ==' do
       test_history = ChessHistory.new
-      3.times do
+      5.times do
         test_history.update_history(MockBoard.new)
       end
       expect(test_history.three_repeats?).to be_truthy
@@ -56,24 +56,33 @@ describe ChessHistory do
     end
 
     it 'recognizes three repeats regardless of order added' do
-      boards = [ MockBoard.new ]
-      10.times { |i| boards.push(MockBoard.new(i)) }
-      3.times do
-        boards.shuffle!
-        history = ChessHistory.new
-        boards.each { |board| history.update_history(board) }
-        expect(history.three_repeats?).to be_falsy
-        history.update_history(MockBoard.new)
-        expect(history.three_repeats?).to be_truthy
-      end
+      boards = [ MockBoard.new, MockBoard.new(11) ]
+      11.times { |i| boards.push(MockBoard.new(i)) }
+      history = ChessHistory.new
+      boards.each { |board| history.update_history(board) }
+      expect(history.three_repeats?).to be_falsy
+      history.update_history(MockBoard.new(12))
+      history.update_history(MockBoard.new)
+      expect(history.three_repeats?).to be_truthy
     end
 
     it 'says there are not three repeats if the repeated position is not the most recent' do
       history = ChessHistory.new
-      3.times { history.update_history(MockBoard.new) }
+      6.times { history.update_history(MockBoard.new) }
       history.update_history(MockBoard.new(1))
       expect(history.three_repeats?).to be_falsy
     end
 
+    it 'says there are not three repeats if the moving player is not the same' do
+      history = ChessHistory.new
+      2.times do
+        history.update_history(MockBoard.new)
+        history.update_history(MockBoard.new(1))
+      end
+      history.update_history(MockBoard.new(3))
+      history.update_history(MockBoard.new(4))
+      history.update_history(MockBoard.new(1)) #this is the whote player's move
+      expect(history.three_repeats?).to be_falsy
+    end
   end
 end
