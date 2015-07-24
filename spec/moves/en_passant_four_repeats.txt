@@ -1,0 +1,17 @@
+b1 c3
+d7 d5
+c3 b1
+d5 d4
+e2 e4
+b8 c6
+b1 c3
+c6 b8
+c3 b1
+b8 c6
+b1 c3
+c6 b8
+c3 b1
+b8 c6
+b1 c3
+c6 b8
+c3 b1
