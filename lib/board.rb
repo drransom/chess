@@ -71,6 +71,7 @@ class Board
     clone_board = Board.new(false)
     clone_board.grid = clone_grid
     clone_board.grid.compact.each {|piece| piece.board = clone_board }
+    clone_board.en_passant = @en_passant
     clone_board
   end
 
@@ -178,11 +179,22 @@ class Board
   end
 
   def ==(other_board)
-    can_castle_colors = [:white, :black].select { |color| can_castle?(color) }
-    other_can_castle_colors = [:white, :black].select { |color| other_board.can_castle?(color) }
-    return false unless can_castle_colors == other_can_castle_colors
-    equivalent = Proc.new do | piece1, piece2 |
-      (!piece1 && !piece2) || piece1.equivalent?(piece2, can_castle_colors)
+    begin
+      can_castle_colors = [:white, :black].select { |color| can_castle?(color) }
+      other_can_castle_colors = [:white, :black].select { |color| other_board.can_castle?(color) }
+      return false unless can_castle_colors == other_can_castle_colors
+      equivalent = Proc.new do | piece1, piece2 |
+        if !piece1 && !piece2
+          true
+        elsif piece1
+          piece1.equivalent?(piece2, can_castle_colors)
+        else
+          false
+        end
+      end
+    rescue => e
+      puts "broke =="
+      puts e.message
     end
     all_equivalent = (0...8).all? do |row|
       (0...8).all? do |col|
@@ -193,7 +205,7 @@ class Board
     en_passant_proc = Proc.new do |color|
       if en_passant_available?(color)
         @en_passant[color] == other_board.en_passant[color] &&
-        @en_passant[to] == other_board.en_passant[to]
+        @en_passant[:target] == other_board.en_passant[:target]
       else
         true
       end

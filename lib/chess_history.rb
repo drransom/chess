@@ -8,7 +8,7 @@ class ChessHistory
   end
 
   def update_history(board)
-    @boards.push(board)
+    @boards.push(board.clone)
   end
 
   def three_repeats?

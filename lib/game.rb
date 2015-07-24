@@ -6,12 +6,16 @@ require_relative 'errors'
 require 'byebug'
 
 class Game
+  attr_reader :history, :board
+
   def initialize(options = {})
     @white_player = options[:white] || HumanPlayer.new(:white)
     @black_player = options[:black] || HumanPlayer.new(:black)
     @current_player = @white_player
     @board = options[:board] || Board.new
     @history = ChessHistory.new
+    @history.update_history(board)
+    @three_repeat_draw = false
   end
 
   def play_chess(moves = [])
@@ -37,13 +41,15 @@ class Game
     until game_over?
       display_board
       quit = play_one_turn
-      return quit if quit == :quit
+      return quit if quit == :quit || quit == :three_repeat_draw
       flip_current_player
     end
   end
 
   def play_one_turn
     begin
+      validate_three_repeat_rule
+      return :three_repeat_draw if three_repeat_draw?
       move = @moves.empty? ? @current_player.play_turn : @moves.shift
       if move[0].downcase == 'q'
         move = @current_player.confirm_quit
@@ -55,6 +61,15 @@ class Game
     rescue => e
       puts e.message
       retry
+    end
+  end
+
+  def validate_three_repeat_rule
+    if history.three_repeats?
+      result = @current_player.request_three_repeat_draw
+      result.downcase.chomp == 'y'
+    else
+      false
     end
   end
 
@@ -71,6 +86,8 @@ class Game
   end
 
   def process_outcome(move, move_outcome)
+    @history.update_history(board)
+    validate_three_repeat_rule
     case move_outcome
     when :pawn_promotion
       promote_pawn(move)
@@ -125,9 +142,9 @@ class Game
   end
 
   def game_over?
+    fifty_move_stalemate? || three_repeat_draw? ||
     @board.checkmate?(@current_player.color) ||
-    @board.stalemate?(@current_player.color) ||
-    fifty_move_stalemate?
+    @board.stalemate?(@current_player.color)
   end
 
   def display_board
@@ -144,7 +161,9 @@ class Game
 
   def display_winner
     display_board
-    if @board.stalemate?(@current_player.color) || fifty_move_stalemate?
+    if fifty_move_stalemate? || three_repeat_draw?
+      puts "Draw."
+    elsif  @board.stalemate?(@current_player.color)
       puts "Stalemate."
     else
       flip_current_player
@@ -154,6 +173,10 @@ class Game
 
   def self.make_moves_from_file(filename)
     @moves = File.readlines(filename).map(&:chomp)
+  end
+
+  def three_repeat_draw?
+    @three_repeat_draw
   end
 end
 

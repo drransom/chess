@@ -2,13 +2,13 @@ a2 a4
 a7 a5
 h2 h4
 h7 h5
-a1 a2
-b8 a6
-a2 a1
-a6 b8
 b1 a3
 b8 a6
 a3 b1
+a6 b8
+a1 a2
+b8 a6
+a2 a1
 a6 b8
 b1 a3
 b8 a6
