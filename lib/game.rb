@@ -1,7 +1,9 @@
 require_relative 'board'
 require_relative 'player'
+require_relative 'chess_history'
 require_relative '../vendor/keypress'
 require_relative 'errors'
+require 'byebug'
 
 class Game
   def initialize(options = {})
@@ -9,13 +11,11 @@ class Game
     @black_player = options[:black] || HumanPlayer.new(:black)
     @current_player = @white_player
     @board = options[:board] || Board.new
+    @history = ChessHistory.new
   end
 
   def play_chess(moves = [])
-    @moves = moves
-    @move_counter = 0
-    @fifty_moves = false
-    initialize_game
+    initialize_game(moves)
     result = play_game
     display_result(result)
   end
@@ -26,27 +26,35 @@ class Game
 
   private
 
-  def initialize_game
+  def initialize_game(moves = [])
     puts "Welcome to chess."
+    @moves = moves
+    @move_counter = 0
+    @fifty_moves = false
   end
 
   def play_game
     until game_over?
       display_board
-      begin
-        move = @moves.empty? ? @current_player.play_turn : @moves.shift
-        if move[0].downcase == 'q'
-          move = @current_player.confirm_quit
-          if move[0] && move[0].downcase == 'y'
-            return :quit
-          end
-        end
-        process_outcome(move, try_move_piece(move))
-      rescue => e
-        puts e.message
-        retry
-      end
+      quit = play_one_turn
+      return quit if quit == :quit
       flip_current_player
+    end
+  end
+
+  def play_one_turn
+    begin
+      move = @moves.empty? ? @current_player.play_turn : @moves.shift
+      if move[0].downcase == 'q'
+        move = @current_player.confirm_quit
+        if move[0] && move[0].downcase == 'y'
+          return :quit
+        end
+      end
+      process_outcome(move, try_move_piece(move))
+    rescue => e
+      puts e.message
+      retry
     end
   end
 
