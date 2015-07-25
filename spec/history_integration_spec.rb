@@ -64,6 +64,7 @@ context "chess history integration" do
   end
 
   it "four iterations are a repeat if en passant was available the first time" do
+    # debugger
     moves = File.readlines('spec/moves/en_passant_four_repeats.txt').map(&:chomp)
     game.send(:initialize_game, moves)
     expect(white_player).to receive(:request_three_repeat_draw).once.and_return('n')
@@ -86,7 +87,7 @@ context "chess history integration" do
   end
 
   it "repeat requires the same player to move" do
-    moves = File.readlines('spec/moves/three_repeats_different_player_moving').map(&:chomp)
+    moves = File.readlines('spec/moves/three_repeats_different_player_moving.txt').map(&:chomp)
     game.send(:initialize_game, moves)
     expect(white_player).not_to receive(:request_three_repeat_draw)
     expect(black_player).not_to receive(:request_three_repeat_draw)

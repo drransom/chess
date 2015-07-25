@@ -5,10 +5,10 @@ b8 c6
 e2 e1
 c6 b8
 e1 e2
-b8 c6
+b8 a6
 e2 e1
-c6 b8
+a6 b8
 e1 e2
-b8 c6
+g8 h6
 e2 e1
-c6 b8
+h6 g8

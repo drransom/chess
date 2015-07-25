@@ -4,10 +4,10 @@ c3 b1
 d5 d4
 e2 e4
 b8 c6
-b1 c3
+g1 h3
 c6 b8
-c3 b1
-b8 c6
-b1 c3
-c6 b8
-c3 b1
+h3 g1
+b8 a6
+b1 a3
+a6 b8
+a3 b1

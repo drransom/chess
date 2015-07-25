@@ -47,8 +47,8 @@ class Game
   end
 
   def play_one_turn
+    validate_three_repeat_rule
     begin
-      validate_three_repeat_rule
       return :three_repeat_draw if three_repeat_draw?
       move = @moves.empty? ? @current_player.play_turn : @moves.shift
       if move[0].downcase == 'q'
@@ -65,6 +65,7 @@ class Game
   end
 
   def validate_three_repeat_rule
+    # debugger if history.three_repeats?
     if history.three_repeats?
       result = @current_player.request_three_repeat_draw
       result.downcase.chomp == 'y'
