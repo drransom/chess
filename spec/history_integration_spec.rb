@@ -81,7 +81,8 @@ context "chess history integration" do
   it "four iterations are a repeat if the king moved the first time" do
     moves = File.readlines('spec/moves/king_move_four_repeats.txt').map(&:chomp)
     game.send(:initialize_game, moves)
-    expect(white_player).to receive(:request_three_repeat_draw).once.and_return('n')
+    expect(black_player).to receive(:request_three_repeat_draw).once
+    expect(white_player).not_to receive(:request_three_repeat_draw)
     play_test_game(moves)
   end
 

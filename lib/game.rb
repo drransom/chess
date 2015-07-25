@@ -86,8 +86,6 @@ class Game
   end
 
   def process_outcome(move, move_outcome)
-    @history.update_history(board)
-    validate_three_repeat_rule
     case move_outcome
     when :pawn_promotion
       promote_pawn(move)
@@ -97,6 +95,8 @@ class Game
       @move_counter += 1
       validate_fifty_move_rule
     end
+    @history.update_history(board)
+    validate_three_repeat_rule
   end
 
   def reset_move_counter
