@@ -1,14 +1,16 @@
 Command Line Chess
 ==================
 A command line chess game written in pure Ruby. The game supports two human players.
-The game implements the full rule set including castling, en passant, and 50-move
-rules, but not the 3-repeat rule.
+The game implements the full rule set including the [50-move rule][50-move],
+[three-repeat rule][three-repeat], and all edge cases associated with the definition of "repeat".
 To play, download the repo and:
 
 ````
     > bundle install
     > ruby lib/game.rb
 ````
+[50-move]: https://en.wikipedia.org/wiki/Fifty-move_rule
+[three-repeat]: https://en.wikipedia.org/wiki/Threefold_repetition
 
 About the Code
 ===============
