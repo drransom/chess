@@ -67,7 +67,7 @@ class Game
 
   def validate_three_repeat_rule
     if history.three_repeats?
-      @current_player.request_three_repeat_draw
+      @three_repeat_draw = @current_player.request_three_repeat_draw
     else
       false
     end
