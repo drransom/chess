@@ -29,9 +29,15 @@ class HumanPlayer < Player
     gets.downcase.chomp
   end
 
-  def request_fifty_move_stalemate
-    puts "You may now request a stalemate thanks to the fifty move rule."
-    puts "Enter 'y' for stalemate, or any other key to continue playing."
-    gets[0] == 'y'
+  def request_fifty_move_draw
+    puts "#{color.to_s.capitalize} may now request a draw thanks to the fifty move rule."
+    puts "Enter 'y' for draw, or any other key to continue playing."
+    gets[0].match(/y/i)
+  end
+
+  def request_three_repeat_draw
+    puts "#{color.to_s.capitalize} may now request a draw thanks to the three repeat rule."
+    puts "Enter 'y' for draw, or any other key to continue playing."
+    gets[0].match(/y/i)
   end
 end

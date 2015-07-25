@@ -36,7 +36,7 @@ class MockPlayer < Player
     'queen'
   end
 
-  def request_fifty_move_stalemate
+  def request_fifty_move_draw
     'y'
   end
 end

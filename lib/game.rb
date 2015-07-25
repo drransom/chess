@@ -15,7 +15,6 @@ class Game
     @board = options[:board] || Board.new
     @history = ChessHistory.new
     @history.update_history(board)
-    @three_repeat_draw = false
   end
 
   def play_chess(moves = [])
@@ -34,7 +33,8 @@ class Game
     puts "Welcome to chess."
     @moves = moves
     @move_counter = 0
-    @fifty_moves = false
+    @fifty_move_draw = false
+    @three_repeat_draw = false
   end
 
   def play_game
@@ -48,8 +48,9 @@ class Game
 
   def play_one_turn
     validate_three_repeat_rule
+    validate_fifty_move_rule
     begin
-      return :three_repeat_draw if three_repeat_draw?
+      return if three_repeat_draw? || fifty_move_draw?
       move = @moves.empty? ? @current_player.play_turn : @moves.shift
       if move[0].downcase == 'q'
         move = @current_player.confirm_quit
@@ -65,10 +66,8 @@ class Game
   end
 
   def validate_three_repeat_rule
-    # debugger if history.three_repeats?
     if history.three_repeats?
-      result = @current_player.request_three_repeat_draw
-      result.downcase.chomp == 'y'
+      @current_player.request_three_repeat_draw
     else
       false
     end
@@ -104,13 +103,13 @@ class Game
     @move_counter = 0
   end
 
-  def fifty_move_stalemate?
-    @fifty_moves
+  def fifty_move_draw?
+    @fifty_move_draw
   end
 
   def validate_fifty_move_rule
     if @move_counter >= 100 # "moves" count both players
-      @fifty_move_stalemate = @current_player.request_fifty_move_stalemate
+      @fifty_move_draw = @current_player.request_fifty_move_draw
     end
   end
 
@@ -143,7 +142,7 @@ class Game
   end
 
   def game_over?
-    fifty_move_stalemate? || three_repeat_draw? ||
+    fifty_move_draw? || three_repeat_draw? ||
     @board.checkmate?(@current_player.color) ||
     @board.stalemate?(@current_player.color)
   end
@@ -162,7 +161,7 @@ class Game
 
   def display_winner
     display_board
-    if fifty_move_stalemate? || three_repeat_draw?
+    if fifty_move_draw? || three_repeat_draw?
       puts "Draw."
     elsif  @board.stalemate?(@current_player.color)
       puts "Stalemate."

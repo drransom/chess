@@ -20,7 +20,7 @@ describe HumanPlayer do
     expect(player).to respond_to(:play_turn)
     expect(player).to respond_to(:confirm_quit)
     expect(player).to respond_to(:request_pawn)
-    expect(player).to respond_to(:request_fifty_move_stalemate)
+    expect(player).to respond_to(:request_fifty_move_draw)
   end
 
 end
