@@ -1,5 +1,7 @@
 require 'spec_helper'
 require 'player'
+require 'game'
+require 'board'
 
 describe Player do
   subject(:player) { Player.new(:black) }
@@ -47,6 +49,12 @@ describe ComputerPlayer do
 
   it '#request_three_repeat_draw' do
     expect(player.request_three_repeat_draw).to be_truthy
+  end
+
+  describe '#play_turn' do
+    let(:board) { Board.new(false) }
+  end
+
   end
 
 end
