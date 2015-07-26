@@ -3,37 +3,33 @@ require 'board'
 require 'pieces'
 
 describe Board do
-  context 'simple boards' do
+  context '#legal_moves with simple boards' do
     subject(:board) { Board.new(false) }
 
     it 'simple case' do
-      board[[7, 0]] = King.new(:white, board, [7, 0])
+      board[[7, 4]] = King.new(:white, board, [7, 4])
       board[[0, 0]] = King.new(:black, board, [0, 0])
       board[[6, 7]] = Rook.new(:black, board, [6, 7])
-      expect(board.legal_moves(:white)).to eq ([[7, 0], [7, 1]])
-    end
-
-    it 'two available moves' do
-      board[[7, 1]] = King.new(:white, board, [7, 1])
-      board[[0, 0]] = King.new(:black, board, [0, 0])
-      board[[6, 7]] = Rook.new(:black, board, [6, 7])
-      expect(board.legal_moves(:white).sort).to eq([ [[7, 1], [7, 0]], [[7, 1], [7, 2]] ])
+      correct_outcome = [[7, 4], [7, 3]], [[7, 4], [7, 5]]
+      expect(board.legal_moves(:white).sort).to eq (correct_outcome)
     end
 
     it 'options for multiple pieces' do
-      board[[7, 0]] = King.new(:white, board, [7, 0])
-      board[[3, 3]] = Pawn.new(:white, board, [3, 3])
+      board[[7, 4]] = King.new(:white, board, [7, 4])
+      board[[7, 0]] = Knight.new(:white, board, [7, 0])
       board[[0, 0]] = King.new(:black, board, [0, 0])
-      correct_outcome = [ [[3, 3]], [[2, 3]], [[7, 1], [7, 0]], [[7, 1], [7, 2]] ]
+      board[[6, 7]] = Rook.new(:black, board, [6, 7])
+      correct_outcome = [ [[7, 0], [5, 1]], [[7, 0], [6, 2]], [[7, 4], [7, 3]], [[7, 4], [7, 5]] ]
       expect(board.legal_moves(:white).sort).to eq(correct_outcome)
     end
 
     it 'moves king out of check if the king is in check' do
-      board[[7, 0]] = King.new(:white, board, [7, 0])
+      board[[7, 4]] = King.new(:white, board, [7, 4])
       board[[3, 3]] = Pawn.new(:white, board, [3, 3])
       board[[0, 0]] = King.new(:black, board, [0, 0])
       board[[7, 7]] = Rook.new(:black, board, [7, 7])
-      expect(board.legal_moves(:white).sort).to eq([ [[7, 0], [6, 0]], [[7, 0], [6, 1]] ])
+      correct_outcome = [ [[7, 4], [6, 3]], [[7, 4], [6, 4]], [[7, 4], [6, 5]] ]
+      expect(board.legal_moves(:white).sort).to eq(correct_outcome)
     end
 
     it 'can avoid check by interposing pieces' do
@@ -79,7 +75,7 @@ describe Board do
       board[[0, 4]] = King.new(:black, board, [0, 4])
       board[[1, 4]] = Pawn.new(:black, board, [1, 4])
       pawn_moves = board.legal_moves(:black).select { |move| move[0] == [1, 4] }.sort
-      expect( pawn_moves ).to eq([[1, 4], [2, 4]], [[1, 4], [3, 4]])
+      expect(pawn_moves).to eq([[[1, 4], [2, 4]], [[1, 4], [3, 4]]])
     end
 
     it 'pawn blocked' do
@@ -107,7 +103,7 @@ describe Board do
       board[[1, 4]] = Pawn.new(:black, board, [1, 4])
       board[[2, 5]] = Rook.new(:white, board, [2, 5])
       moves = board.legal_moves(:black)
-      expect(moves).to_include([[1, 4], [2, 5]])
+      expect(moves).to include([[1, 4], [2, 5]])
       expect(moves).not_to include([[1, 4], [2, 3]])
     end
 
@@ -117,7 +113,7 @@ describe Board do
       board[[3, 3]] = Bishop.new(:black, board, [3, 3])
       bishop_moves = [0, 1, 2, 4, 5, 6, 7].map { |i| [[3, 3], [i, i]] }
       bishop_moves += [0, 1, 2, 4, 5, 6].map { |i| [[3, 3], [i, 6 - i]] }
-      moves = board.legal_moves(:black)
+      moves = board.legal_moves(:black).select { |move| move[0] == [3, 3] }
       expect(moves.sort).to eq(bishop_moves.sort)
     end
 
@@ -125,9 +121,8 @@ describe Board do
       board[[7, 4]] = King.new(:white, board, [7, 4])
       board[[0, 4]] = King.new(:black, board, [0, 4])
       board[[3, 3]] = Rook.new(:black, board, [3, 3])
-      board[[3, 5]] = Pawn.new(:white, board, [3, 5])
       rook_moves = [0, 1, 2, 4, 5, 6, 7].map { |i| [[3, 3], [i, 3]] }
-      rook_moves += [1, 2, 3, 4, 5].map { |i| [[3, 3], [3, i]] }
+      rook_moves += [0, 1, 2, 4, 5, 6, 7].map { |i| [[3, 3], [3, i]] }
       moves = board.legal_moves(:black).select { |move| move[0] == [3, 3] }
       expect(moves.sort).to eq(rook_moves.sort)
     end
@@ -147,7 +142,7 @@ describe Board do
       board[[0, 4]] = King.new(:black, board, [0, 4])
       board[[3, 3]] = Queen.new(:black, board, [3, 3])
       rook_moves = [0, 1, 2, 4, 5, 6, 7].map { |i| [[3, 3], [i, 3]] }
-      rook_moves += [1, 2, 3, 4, 5].map { |i| [[3, 3], [3, i]] }
+      rook_moves += [0, 1, 2, 4, 5, 6, 7].map { |i| [[3, 3], [3, i]] }
       bishop_moves = [0, 1, 2, 4, 5, 6, 7].map { |i| [[3, 3], [i, i]] }
       bishop_moves += [0, 1, 2, 4, 5, 6].map { |i| [[3, 3], [i, 6 - i]] }
       queen_moves = rook_moves + bishop_moves
@@ -180,7 +175,7 @@ describe Board do
     end
   end
 
-  context 'initial setup' do
+  context '#legal_moves with initial setup' do
     subject(:board) { Board.new(true) }
 
     it 'calculates all the initial moves' do

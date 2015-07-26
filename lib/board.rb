@@ -258,6 +258,17 @@ class Board
     end
   end
 
+  def legal_moves(color)
+    [].tap do |moves_array|
+      @grid.compact.each do |piece|
+        moves = piece.color == color ? piece.moves : []
+        moves.each do |move|
+          moves_array << [piece.position, move] if new_position_valid?(piece, move)
+        end
+      end
+    end
+  end
+
   private
 
   def build_grid
@@ -294,15 +305,18 @@ class Board
 
   def has_legal_move?(color)
     player_pieces = find_all_pieces(color)
-
     player_pieces.each do |piece|
       piece.moves.each do |move|
-        clone = self.clone
-        clone.move_piece(piece.position, move)
-        return true unless clone.in_check?(color)
+        return true if new_position_valid?(piece, move)
       end
     end
     false
+  end
+
+  def new_position_valid?(piece, new_position)
+    clone = self.clone
+    clone.move_piece(piece.position, new_position)
+    return true unless clone.in_check?(piece.color)
   end
 
   def create_piece(color, board, position, sym)
