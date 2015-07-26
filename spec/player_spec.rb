@@ -51,10 +51,4 @@ describe ComputerPlayer do
     expect(player.request_three_repeat_draw).to be_truthy
   end
 
-  describe '#play_turn' do
-    let(:board) { Board.new(false) }
-  end
-
-  end
-
 end
