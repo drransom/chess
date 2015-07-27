@@ -272,13 +272,22 @@ class Board
   end
 
   def move_checkmates_other_color?(from, to, color)
-    opponent_color = Game.other_color(color)
-    cloned_board = self.clone
-    cloned_board.move_piece(from, to)
-    cloned_board.checkmate?(opponent_color)
+    cloned_board = create_clone_and_move(from, to)
+    cloned_board.checkmate?(Game.other_color(color))
+  end
+
+  def move_stalemates_other_color?(from, to, color)
+    cloned_board = create_clone_and_move(from, to)
+    cloned_board.stalemate?(Game.other_color(color))
   end
 
   private
+
+  def create_clone_and_move(from, to)
+    cloned_board = self.clone
+    cloned_board.move_piece(from, to)
+    cloned_board
+  end
 
   def build_grid
     build_pawns

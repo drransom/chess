@@ -236,65 +236,22 @@ describe Board do
       it 'handles a simple case' do
         board[[6, 0]] = Rook.new(:black, board, [6, 0])
         board[[7, 3]] = Knight.new(:black, board, [7, 3])
-        expect(board.move_stalemates_other_color?([[7, 3], [5, 4]], :black)).to be_truthy
+        expect(board.move_stalemates_other_color?([7, 3], [5, 4], :black)).to be_truthy
       end
 
       it 'revealed stalemate' do
         board[[6, 0]] = Rook.new(:black, board, [6, 0])
         board[[6, 1]] = Bishop.new(:black, board, [6, 1])
         board[[5, 4]] = Knight.new(:black, board, [5, 4])
-        expect(board.move_stalemates_other_color?([[6, 1], [4, 3]], :black)).to be_truthy
+        expect(board.move_stalemates_other_color?([6, 1], [4, 3], :black)).to be_truthy
       end
 
       it 'checkmate is not stalemate' do
         board[[6, 0]] = Rook.new(:black, board, [6, 0])
+        board[[7, 0]] = Rook.new(:black, board, [7, 0])
         board[[7, 3]] = Knight.new(:black, board, [7, 3])
-        expect(board.move_stalemates_opponent?([[7, 3], [5, 4]], :black)).to be_falsy
+        expect(board.move_stalemates_other_color?([7, 3], [5, 4], :black)).to be_falsy
       end
     end
   end
 end
-
-  # context '#legal_caputures' do
-  #   subject(:board) { Board.new(true) }
-  #
-  #   before(:each) do
-  #     board[[7, 4]] = King.new(:white, board, [7, 4])
-  #     board[[0, 4]] = King.new(:black, board, [0, 4])
-  #   end
-  #
-  #   it 'handles a simple case' do
-  #     expect(board.legal_captures(:white)).to eq([])
-  #     expect(board.legal_captures(:black)).to eq([])
-  #   end
-  #
-  #   it 'finds a simple capture' do
-  #     board[[0, 5]] = Queen.new(:white, board, [0, 5])
-  #
-  #     expect(board.legal_captures(:black)).to eq([ [[0, 4], [0, 5]]])
-  #     expect(board.legal_captures(:white)).to eq([])
-  #   end
-  #
-  #   it 'cannot capture into check' do
-  #     board[[0, 5]] = Queen.new(:white, board, [0, 5])
-  #     board[[1, 3]] = Knight.new(:white, board, [1, 3])
-  #
-  #     expect(board.legal_captures(:black)).to eq([])
-  #   end
-  #
-  #   it 'finds multiple captures for the same piece' do
-  #     board[[0, 5]] = Bishop.new(:white, board, [0, 5])
-  #     board[[0, 3]] = Knight.new(:white, board, [0, 3])
-  #
-  #     captures = board.legal_captures(:black)
-  #     expect(captures.sort).to eq([ [[0, 4], [0, 3]], [[0, 4], [0, 5]] ])
-  #   end
-  #
-  #   it 'finds captures by different pieces' do
-  #     board[[0, 5]] = Knight.new(:white, board, [0, 5])
-  #     board[[2, 2]] = Knight.new(:white, board, [2, 2])
-  #     board[[1, 4]] = Knight.new(:black, board, [1, 4])
-  #     captures = board.legal_captures(:black)
-  #     correct_outcome = [ [[0, 4], [0, 5]], [[0, 4], [1, 4]], [[2, 2], [1, 4]] ]
-  #     expect(captures.sort).to eq(correct_outcome)
-  #   end
