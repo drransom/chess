@@ -28,10 +28,12 @@ class Board
     @grid[(row * 8) + col] = new_value
   end
 
+  #determines if color is in stalemate
   def stalemate?(color)
     !in_check?(color) && !has_legal_move?(color)
   end
 
+  #determines if color has lost
   def checkmate?(color)
     in_check?(color) && !has_legal_move?(color)
   end
@@ -267,6 +269,13 @@ class Board
         end
       end
     end
+  end
+
+  def move_checkmates_other_color?(from, to, color)
+    opponent_color = Game.other_color(color)
+    cloned_board = self.clone
+    cloned_board.move_piece(from, to)
+    cloned_board.checkmate?(opponent_color)
   end
 
   private

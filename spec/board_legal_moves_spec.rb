@@ -164,7 +164,7 @@ describe Board do
       board[[7, 4]] = King.new(:white, board, [7, 4])
       board[[0, 4]] = King.new(:black, board, [0, 4])
       board[[3, 3]] = Queen.new(:black, board, [3, 3])
-      board[[3, 1]] == Queen.new(:white, board, [3, 1])
+      board[[3, 1]] = Queen.new(:white, board, [3, 1])
       moves = board.legal_moves(:white)
       expect(moves).to include([[3, 1], [3, 3]])
       expect(moves).not_to include([[3, 1], [3, 4]])
@@ -174,7 +174,7 @@ describe Board do
       board[[7, 4]] = King.new(:white, board, [7, 4])
       board[[0, 4]] = King.new(:black, board, [0, 4])
       board[[3, 3]] = Rook.new(:black, board, [3, 3])
-      board[[3, 1]] == Rook.new(:black, board, [3, 1])
+      board[[3, 1]] = Rook.new(:black, board, [3, 1])
       moves = board.legal_moves(:black)
       expect( moves.select { |move| move[0] == [3, 3]}.length).to_not eq(0)
       expect(moves).to_not include([[3, 3], [3, 1]])
@@ -193,7 +193,7 @@ describe Board do
     end
   end
 
-  context 'future move evaluation'
+  context 'future move evaluation' do
     subject(:board) { Board.new(false) }
 
     describe '#move_checkmates_other_color?' do
@@ -206,24 +206,24 @@ describe Board do
       it 'handles a simple case' do
         board[[6, 7]] = Queen.new(:black, board, [6, 7])
         board[[5, 6]] = Rook.new(:black, board, [5, 6])
-        expect board.move_checkmates_other_color?([[5, 6], [7, 6]], :black).to be_truthy
+        expect(board.move_checkmates_other_color?([5, 6], [7, 6], :black)).to be_truthy
       end
 
       it 'revealed check' do
         board[[0, 0]] = Rook.new(:white, board, [0, 0])
         board[[0, 1]] = Knight.new(:white, board, [0, 1])
         board[[1, 7]] = Rook.new(:white, board, [1, 7])
-        expect(board.move_checkmates_other_color?([[0, 1], [2, 0]], :white)).to be_truthy
+        expect(board.move_checkmates_other_color?([0, 1], [2, 0], :white)).to be_truthy
       end
 
       it 'recognizes moves that are not checkmate' do
-        expect(board.move_checkmates_other_color?([[0, 4], [0, 5]], :black)).to be_falsy
+        expect(board.move_checkmates_other_color?([0, 4], [0, 5], :black)).to be_falsy
       end
 
       it 'stalemate is not checkmate' do
         board[[6, 0]] = Rook.new(:black, board, [6, 0])
         board[[7, 3]] = Knight.new(:black, board, [7, 3])
-        expect(board.move_checkmates?([[7, 3], [5, 4]], :black)).to be_falsy
+        expect(board.move_checkmates_other_color?([7, 3], [5, 4], :black)).to be_falsy
       end
     end
 
@@ -253,6 +253,7 @@ describe Board do
       end
     end
   end
+end
 
   # context '#legal_caputures' do
   #   subject(:board) { Board.new(true) }
@@ -297,7 +298,3 @@ describe Board do
   #     correct_outcome = [ [[0, 4], [0, 5]], [[0, 4], [1, 4]], [[2, 2], [1, 4]] ]
   #     expect(captures.sort).to eq(correct_outcome)
   #   end
-
-  end
-
-end
