@@ -43,6 +43,7 @@ describe ComputerPlayer do
       expect(player).to respond_to(:request_pawn)
       expect(player).to respond_to(:request_fifty_move_draw)
       expect(player).to respond_to(:request_three_repeat_draw)
+      expect(player).to respond_to(:add_new_game)
     end
 
     it '#request_fifty_move_draw' do
@@ -52,9 +53,89 @@ describe ComputerPlayer do
     it '#request_three_repeat_draw' do
       expect(player.request_three_repeat_draw).to be_truthy
     end
+  end
 
-  context 'select moves' do
-    describe 'outcome' do
+  context 'move selection' do
+    let(:board) { Board.new(false) }
+    let(:game) { double("game", board: board, white: player) }
+
+    before(:each) do
+      player.add_new_game(game)
+      board[[0, 4]] = King.new(:black, board, [0, 4])
+      board[[7, 4]] = King.new(:black, board, [7, 4])
+    end
+
+    it 'selects a legal move' do
+      board[[6, 4]] = Pawn.new(:white, board, [6, 4])
+      available_moves = [ [[7, 4], [7, 3]], [[7, 4], [7, 5]], [[7, 4], [6, 3]],
+                         [[7, 4], [6, 5]], [[6, 4], [5, 4]], [[6, 4], [4, 4]]  ]
+      10.times do
+        move = player.play_turn
+        expect(available_moves).to include(move)
+      end
+    end
+
+    it 'checkmates when available' do
+      board[[6, 0]] = Rook.new(:white, board, [6, 0])
+      board[[5, 1]] = Rook.new(:white, board, [5, 1])
+      10.times do
+        expect(player.play_turn).to eq([[5, 1], [7, 1]])
+      end
+    end
+
+    it 'captures when available' do
+      board[[6, 4]] = Pawn.new(:white, board, [6, 4])
+      board[[5, 3]] = Pawn.new(:black, board, [5, 3])
+      10.times do
+        expect(player.play_turn).to eq([[6, 4], [5, 3]])
+      end
+    end
+
+    it 'prefers checkmate to capture' do
+      board[[6, 0]] = Rook.new(:white, board, [6, 0])
+      board[[5, 1]] = Rook.new(:white, board, [5, 1])
+      board[[6, 4]] = Pawn.new(:white, board, [6, 4])
+      board[[5, 3]] = Pawn.new(:black, board, [5, 3])
+      10.times do
+        expect(player.play_turn).to eq([[5, 1], [7, 1]])
+      end
+    end
+
+    it 'captures a higher-value piece over a lower-value piece' do
+      board[[6, 4]] = Pawn.new(:white, board, [6, 4])
+      board[[5, 3]] = Pawn.new(:black, board, [5, 3])
+      board[[5, 5]] = Bishop.new(:black, board, [5, 5])
+      10.times do
+        expect(player.play_turn).to eq([[6, 4], [5, 5]])
+      end
+    end
+  end
+
+  context 'initial move selection' do
+
+    let(:board) { Board.new(true) }
+    let(:game) { double("game", board: board, white: player) }
+
+    before(:each) do
+      player.add_new_game(game)
+    end
+
+    it 'does not always select the same move' do
+      move = player.play_turn
+      counter = 0
+      1000.times do
+        break unless player.play_turn == move
+        counter += 1
+      end
+      expect(counter).not_to eq(1000)
+    end
+
+    it 'does not try to move one of the back row pieces' do
+      legal_pieces = (0..7).map { |i| [6, i]} + [[0, 4]]
+      10.times do |i|
+        piece = player.play_turn[0]
+        expect(legal_pieces).to include(piece)
+      end
     end
   end
 

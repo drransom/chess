@@ -20,6 +20,9 @@ class Player
   def request_three_repeat_draw
     true
   end
+
+  def add_new_game(game = nil)
+  end
 end
 
 class HumanPlayer < Player
