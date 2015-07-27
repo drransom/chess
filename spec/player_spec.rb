@@ -62,7 +62,7 @@ describe ComputerPlayer do
     before(:each) do
       player.add_new_game(game)
       board[[0, 4]] = King.new(:black, board, [0, 4])
-      board[[7, 4]] = King.new(:black, board, [7, 4])
+      board[[7, 4]] = King.new(:white, board, [7, 4])
     end
 
     it 'selects a legal move' do
@@ -76,10 +76,10 @@ describe ComputerPlayer do
     end
 
     it 'checkmates when available' do
-      board[[6, 0]] = Rook.new(:white, board, [6, 0])
+      board[[1, 0]] = Rook.new(:white, board, [1, 0])
       board[[5, 1]] = Rook.new(:white, board, [5, 1])
       10.times do
-        expect(player.play_turn).to eq([[5, 1], [7, 1]])
+        expect(player.play_turn).to eq([[5, 1], [0, 1]])
       end
     end
 
@@ -92,12 +92,12 @@ describe ComputerPlayer do
     end
 
     it 'prefers checkmate to capture' do
-      board[[6, 0]] = Rook.new(:white, board, [6, 0])
+      board[[1, 0]] = Rook.new(:white, board, [1, 0])
       board[[5, 1]] = Rook.new(:white, board, [5, 1])
-      board[[6, 4]] = Pawn.new(:white, board, [6, 4])
-      board[[5, 3]] = Pawn.new(:black, board, [5, 3])
+      board[[5, 4]] = Pawn.new(:white, board, [5, 4])
+      board[[4, 3]] = Pawn.new(:black, board, [4, 3])
       10.times do
-        expect(player.play_turn).to eq([[5, 1], [7, 1]])
+        expect(player.play_turn).to eq([[5, 1], [0, 1]])
       end
     end
 
@@ -130,8 +130,8 @@ describe ComputerPlayer do
       expect(counter).not_to eq(1000)
     end
 
-    it 'does not try to move one of the back row pieces' do
-      legal_pieces = (0..7).map { |i| [6, i]} + [[0, 4]]
+    it 'does not try to move an illegal piece' do
+      legal_pieces = (0..7).map { |i| [6, i]} + [[7, 1], [7, 6]]
       10.times do |i|
         piece = player.play_turn[0]
         expect(legal_pieces).to include(piece)

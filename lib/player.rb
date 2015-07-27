@@ -59,6 +59,61 @@ end
 
 class ComputerPlayer < Player
 
-  def play_turn(board = nil)
+  def add_new_game(game)
+    @game = game
+    @board = game.board
+  end
+
+  def play_turn
+    get_best_move(@board.legal_moves(color))
+  end
+
+  private
+
+  def get_best_move(possible_moves)
+    select_best_moves(possible_moves).sample
+  end
+
+  def select_best_moves(possible_moves)
+    best_moves = [possible_moves[0]]
+    current_best_result = find_result(possible_moves[0])
+    (1...possible_moves.length).each do |i|
+      move_result = find_result(possible_moves[i])
+      case compare_results(current_best_result, move_result)
+      when 1
+        best_moves = [possible_moves[i]]
+        current_best_result = move_result
+      when 0
+        best_moves << possible_moves[i]
+      end
+    end
+    best_moves
+  end
+
+  def compare_results(result1, result2)
+    results = [:stalemate, :nilclass, :pawn, :knight, :bishop, :rook, :queen, :pawn_promotion, :checkmate]
+    result1_val = results.find_index(result1)
+    result2_val = results.find_index(result2)
+    if result2_val > result1_val
+      1
+    elsif result2_val == result1_val
+      0
+    else
+      -1
+    end
+  end
+
+  def find_result(move)
+    from, to = move
+    # debugger if to == [0, 1]
+    if @board.move_checkmates_other_color?(from, to, color)
+      :checkmate
+    elsif @board.move_stalemates_other_color?(from, to, color)
+      :stalemate
+    elsif (@board[from]).is_a?(Pawn) && (to[0] % 7 == 0)
+      :pawn_promotion
+    else
+      @board[to].class.to_s.downcase.to_sym
+    end
   end
 end
