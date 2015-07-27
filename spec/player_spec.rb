@@ -31,24 +31,31 @@ end
 describe ComputerPlayer do
   subject(:player) { ComputerPlayer.new(:white) }
 
-  it 'has a color' do
-    expect(player.color).to eq(:white)
-  end
+  context 'basics' do
 
-  it 'responds to required methods' do
-    expect(player).to respond_to(:play_turn)
-    expect(player).to respond_to(:confirm_quit)
-    expect(player).to respond_to(:request_pawn)
-    expect(player).to respond_to(:request_fifty_move_draw)
-    expect(player).to respond_to(:request_three_repeat_draw)
-  end
+    it 'has a color' do
+      expect(player.color).to eq(:white)
+    end
 
-  it '#request_fifty_move_draw' do
-    expect(player.request_fifty_move_draw).to be_truthy
-  end
+    it 'responds to required methods' do
+      expect(player).to respond_to(:play_turn)
+      expect(player).to respond_to(:confirm_quit)
+      expect(player).to respond_to(:request_pawn)
+      expect(player).to respond_to(:request_fifty_move_draw)
+      expect(player).to respond_to(:request_three_repeat_draw)
+    end
 
-  it '#request_three_repeat_draw' do
-    expect(player.request_three_repeat_draw).to be_truthy
+    it '#request_fifty_move_draw' do
+      expect(player.request_fifty_move_draw).to be_truthy
+    end
+
+    it '#request_three_repeat_draw' do
+      expect(player.request_three_repeat_draw).to be_truthy
+    end
+
+  context 'select moves' do
+    describe 'outcome' do
+    end
   end
 
 end
