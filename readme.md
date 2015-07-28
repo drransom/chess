@@ -1,8 +1,9 @@
 Command Line Chess
 ==================
-A command line chess game written in pure Ruby. The game supports two human players.
-The game implements the full rule set including the [50-move rule][50-move],
-[three-repeat rule][three-repeat], and all edge cases associated with the definition of "repeat".
+A command line chess game written in pure Ruby. The game supports two human players,
+or a human player against a (not very bright) AI. The game implements the full rule
+set including the [50-move rule][50-move], [three-repeat rule][three-repeat], and all edge cases associated with the definition of "repeat".
+
 To play, download the repo and:
 
 ````
@@ -37,3 +38,23 @@ end
 Pieces
 ---------------
 All six chess pieces inherit from a single `Piece` class, which holds no logic other than initialization. Most movement logic is delegated to `Slideable` and `Stepable` modules. `King` and `Knight` include `Stepable`, while `Queen`, `Bishop`, and `Rook` include `Slideable`. The `Pawn` class has its own movement logic due to the complexity of first moves, attacks, promotion, and en passant.
+
+The Players
+==============
+The `HumanPlayer` and `ComputerPlayer` classes handle the logic for requesting
+moves from the player and sending that information back to the `Game`. The `Game`
+object interacts with the `HumanPlayer` and `ComputerPlayer` objects exclusively
+by calling `#play_turn`, which returns the player's move (or attempted move). The
+IO logic is handled by the two player classes, as is the AI.
+
+The AI
+-----------
+`ComputerPlayer#get_best_move` follows a greedy algorithm, selecting options
+based on the following priority ranking:
+* Checkmate opponent
+* Promote pawn
+* Capture highest-value piece
+* Any non-capture move that does not cause stalemate
+* Any move that causes stalemate
+
+If there is more than one "best" move, the AI chooses randomly.
