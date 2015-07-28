@@ -33,6 +33,7 @@ describe ComputerPlayer do
 
   context 'basics' do
 
+
     it 'has a color' do
       expect(player.color).to eq(:white)
     end
@@ -53,6 +54,11 @@ describe ComputerPlayer do
     it '#request_three_repeat_draw' do
       expect(player.request_three_repeat_draw).to be_truthy
     end
+
+    it '#convert_move_to_chess_notation' do
+      move = player.send(:convert_move_to_chess_notation, [ [1, 4], [3, 4] ])
+      expect(move).to eq('e7 e5')
+    end
   end
 
   context 'move selection' do
@@ -70,7 +76,7 @@ describe ComputerPlayer do
       available_moves = [ [[7, 4], [7, 3]], [[7, 4], [7, 5]], [[7, 4], [6, 3]],
                          [[7, 4], [6, 5]], [[6, 4], [5, 4]], [[6, 4], [4, 4]]  ]
       10.times do
-        move = player.play_turn
+        move = player.send(:get_best_move, available_moves)
         expect(available_moves).to include(move)
       end
     end
@@ -78,16 +84,18 @@ describe ComputerPlayer do
     it 'checkmates when available' do
       board[[1, 0]] = Rook.new(:white, board, [1, 0])
       board[[5, 1]] = Rook.new(:white, board, [5, 1])
+      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.play_turn).to eq([[5, 1], [0, 1]])
+        expect(player.send(:get_best_move, available_moves)).to eq([[5, 1], [0, 1]])
       end
     end
 
     it 'captures when available' do
       board[[6, 4]] = Pawn.new(:white, board, [6, 4])
       board[[5, 3]] = Pawn.new(:black, board, [5, 3])
+      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.play_turn).to eq([[6, 4], [5, 3]])
+        expect(player.send(:get_best_move, available_moves)).to eq([[6, 4], [5, 3]])
       end
     end
 
@@ -96,8 +104,9 @@ describe ComputerPlayer do
       board[[5, 1]] = Rook.new(:white, board, [5, 1])
       board[[5, 4]] = Pawn.new(:white, board, [5, 4])
       board[[4, 3]] = Pawn.new(:black, board, [4, 3])
+      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.play_turn).to eq([[5, 1], [0, 1]])
+        expect(player.send(:get_best_move, available_moves)).to eq([[5, 1], [0, 1]])
       end
     end
 
@@ -105,8 +114,9 @@ describe ComputerPlayer do
       board[[6, 4]] = Pawn.new(:white, board, [6, 4])
       board[[5, 3]] = Pawn.new(:black, board, [5, 3])
       board[[5, 5]] = Bishop.new(:black, board, [5, 5])
+      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.play_turn).to eq([[6, 4], [5, 5]])
+        expect(player.send(:get_best_move, available_moves)).to eq([[6, 4], [5, 5]])
       end
     end
   end
@@ -121,10 +131,11 @@ describe ComputerPlayer do
     end
 
     it 'does not always select the same move' do
-      move = player.play_turn
+      available_moves = board.legal_moves(:white)
+      move = player.send(:get_best_move, available_moves)
       counter = 0
       1000.times do
-        break unless player.play_turn == move
+        break unless player.send(:get_best_move, available_moves) == move
         counter += 1
       end
       expect(counter).not_to eq(1000)
@@ -132,8 +143,9 @@ describe ComputerPlayer do
 
     it 'does not try to move an illegal piece' do
       legal_pieces = (0..7).map { |i| [6, i]} + [[7, 1], [7, 6]]
+      available_moves = board.legal_moves(:white)
       10.times do |i|
-        piece = player.play_turn[0]
+        piece = player.send(:get_best_move, available_moves)[0]
         expect(legal_pieces).to include(piece)
       end
     end

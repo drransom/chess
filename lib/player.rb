@@ -23,6 +23,9 @@ class Player
 
   def add_new_game(game = nil)
   end
+
+  def notify_of_color
+  end
 end
 
 class HumanPlayer < Player
@@ -55,6 +58,10 @@ class HumanPlayer < Player
     puts "Enter 'y' for draw, or any other key to continue playing."
     gets[0].match(/y/i)
   end
+
+  def notify_of_color
+    puts "You are #{color}."
+  end
 end
 
 class ComputerPlayer < Player
@@ -65,13 +72,20 @@ class ComputerPlayer < Player
   end
 
   def play_turn
-    get_best_move(@board.legal_moves(color))
+     move = get_best_move(@board.legal_moves(color))
+     convert_move_to_chess_notation(move)
   end
 
   private
 
   def get_best_move(possible_moves)
     select_best_moves(possible_moves).sample
+  end
+
+  def convert_move_to_chess_notation(move)
+    letters = ('a'..'h').to_a
+    rows = (1..8).to_a.reverse
+    move.map { |row, col| "#{letters[col]}#{rows[row]}" }.join(' ')
   end
 
   def select_best_moves(possible_moves)
@@ -105,7 +119,6 @@ class ComputerPlayer < Player
 
   def find_result(move)
     from, to = move
-    # debugger if to == [0, 1]
     if @board.move_checkmates_other_color?(from, to, color)
       :checkmate
     elsif @board.move_stalemates_other_color?(from, to, color)

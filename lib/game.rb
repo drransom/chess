@@ -11,7 +11,6 @@ class Game
   def initialize(options = {})
     @white_player = options[:white] || HumanPlayer.new(:white)
     @black_player = options[:black] || HumanPlayer.new(:black)
-    @current_player = @white_player
     @board = options[:board] || Board.new
     @history = ChessHistory.new
     @history.update_history(board)
@@ -32,6 +31,22 @@ class Game
   def initialize_game(moves = [])
     puts "Welcome to chess."
     @moves = moves
+    if @moves.empty?
+      puts "enter 'h' to play against a human player, or any other key to " +
+            "play the computer."
+      unless gets[0].downcase == 'h'
+        if [:white, :black].sample == :white
+          @white_player = ComputerPlayer.new(:white)
+          @white_player.add_new_game(self)
+          @black_player.notify_of_color
+        else
+          @black_player = ComputerPlayer.new(:black)
+          @black_player.add_new_game(self)
+          @white_player.notify_of_color
+        end
+      end
+    end
+    @current_player = @white_player
     @move_counter = 0
     @fifty_move_draw = false
     @three_repeat_draw = false
