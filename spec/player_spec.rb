@@ -142,10 +142,9 @@ describe ComputerPlayer do
     end
 
     it 'does not try to move an illegal piece' do
-      legal_pieces = (0..7).map { |i| [6, i]} + [[7, 1], [7, 6]]
-      available_moves = board.legal_moves(:white)
+      legal_pieces = ('a'..'h').map { |char| ["#{char}2"]} + ['b1', 'g1']
       10.times do |i|
-        piece = player.send(:get_best_move, available_moves)[0]
+        piece = player.get_best_move().split(' ')[1]
         expect(legal_pieces).to include(piece)
       end
     end
