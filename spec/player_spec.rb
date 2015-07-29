@@ -73,10 +73,9 @@ describe ComputerPlayer do
 
     it 'selects a legal move' do
       board[[6, 4]] = Pawn.new(:white, board, [6, 4])
-      available_moves = [ [[7, 4], [7, 3]], [[7, 4], [7, 5]], [[7, 4], [6, 3]],
-                         [[7, 4], [6, 5]], [[6, 4], [5, 4]], [[6, 4], [4, 4]]  ]
+      available_moves = ["e1 d1", "e1 f1", "e1 d2", "e1 f2", "e2 e3", "e2 e4"]
       10.times do
-        move = player.send(:get_best_move, available_moves)
+        move = player.play_turn
         expect(available_moves).to include(move)
       end
     end
@@ -84,9 +83,8 @@ describe ComputerPlayer do
     it 'checkmates when available' do
       board[[1, 0]] = Rook.new(:white, board, [1, 0])
       board[[5, 1]] = Rook.new(:white, board, [5, 1])
-      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.send(:get_best_move, available_moves)).to eq([[5, 1], [0, 1]])
+        expect(player.play_turn).to eq('b3 b8')
       end
     end
 
