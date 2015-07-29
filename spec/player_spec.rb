@@ -93,9 +93,8 @@ describe ComputerPlayer do
     it 'captures when available' do
       board[[6, 4]] = Pawn.new(:white, board, [6, 4])
       board[[5, 3]] = Pawn.new(:black, board, [5, 3])
-      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.send(:get_best_move, available_moves)).to eq([[6, 4], [5, 3]])
+        expect(player.play_turn).to eq('e2 d3')
       end
     end
 
@@ -104,9 +103,8 @@ describe ComputerPlayer do
       board[[5, 1]] = Rook.new(:white, board, [5, 1])
       board[[5, 4]] = Pawn.new(:white, board, [5, 4])
       board[[4, 3]] = Pawn.new(:black, board, [4, 3])
-      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.send(:get_best_move, available_moves)).to eq([[5, 1], [0, 1]])
+        expect(player.play_turn).to eq('b3 b8')
       end
     end
 
@@ -114,9 +112,8 @@ describe ComputerPlayer do
       board[[6, 4]] = Pawn.new(:white, board, [6, 4])
       board[[5, 3]] = Pawn.new(:black, board, [5, 3])
       board[[5, 5]] = Bishop.new(:black, board, [5, 5])
-      available_moves = board.legal_moves(:white)
       10.times do
-        expect(player.send(:get_best_move, available_moves)).to eq([[6, 4], [5, 5]])
+        expect(player.play_turn).to eq('e2 f3')
       end
     end
   end
@@ -131,19 +128,19 @@ describe ComputerPlayer do
     end
 
     it 'does not always select the same move' do
-      move = player.get_best_move
+      move = player.play_turn
       counter = 0
       1000.times do
-        break unless player.get_best_move == move
+        break unless player.play_turn == move
         counter += 1
       end
       expect(counter).not_to eq(1000)
     end
 
     it 'does not try to move an illegal piece' do
-      legal_pieces = ('a'..'h').map { |char| ["#{char}2"]} + ['b1', 'g1']
+      legal_pieces = ('a'..'h').map { |char| "#{char}2"} + ['b1', 'g1']
       10.times do |i|
-        piece = player.get_best_move().split(' ')[1]
+        piece = player.play_turn.split(' ')[0]
         expect(legal_pieces).to include(piece)
       end
     end
