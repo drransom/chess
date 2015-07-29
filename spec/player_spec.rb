@@ -131,11 +131,10 @@ describe ComputerPlayer do
     end
 
     it 'does not always select the same move' do
-      available_moves = board.legal_moves(:white)
-      move = player.send(:get_best_move, available_moves)
+      move = player.get_best_move
       counter = 0
       1000.times do
-        break unless player.send(:get_best_move, available_moves) == move
+        break unless player.get_best_move == move
         counter += 1
       end
       expect(counter).not_to eq(1000)
